@@ -18,6 +18,10 @@ export default {
 			}
 		},
 		extend: {
+			fontFamily: {
+				'mono': ['JetBrains Mono', 'monospace'],
+				'display': ['Orbitron', 'monospace'],
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
@@ -52,15 +56,26 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
-				sidebar: {
-					DEFAULT: 'hsl(var(--sidebar-background))',
-					foreground: 'hsl(var(--sidebar-foreground))',
-					primary: 'hsl(var(--sidebar-primary))',
-					'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
-					accent: 'hsl(var(--sidebar-accent))',
-					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
-					border: 'hsl(var(--sidebar-border))',
-					ring: 'hsl(var(--sidebar-ring))'
+				terminal: {
+					bg: 'hsl(var(--terminal-bg))',
+					surface: 'hsl(var(--terminal-surface))',
+					border: 'hsl(var(--terminal-border))'
+				},
+				status: {
+					critical: 'hsl(var(--status-critical))',
+					warning: 'hsl(var(--status-warning))',
+					success: 'hsl(var(--status-success))',
+					info: 'hsl(var(--status-info))'
+				},
+				faction: {
+					alpha: 'hsl(var(--faction-alpha))',
+					beta: 'hsl(var(--faction-beta))',
+					gamma: 'hsl(var(--faction-gamma))',
+					neutral: 'hsl(var(--faction-neutral))'
+				},
+				glow: {
+					primary: 'hsl(var(--glow-primary))',
+					secondary: 'hsl(var(--glow-secondary))'
 				}
 			},
 			borderRadius: {
