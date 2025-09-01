@@ -3,6 +3,7 @@ import { WarfareLayout } from '@/components/layout/WarfareLayout';
 import { TerminalInterface } from '@/components/TerminalInterface';
 import { TacticalMap3D } from '@/components/TacticalMap3D';
 import { DesktopEmulator } from '@/components/DesktopEmulator';
+import { ProductionDesktopEmulator } from '@/components/Enhanced/ProductionDesktopEmulator';
 import { TimelineSystem } from '@/components/Timeline/TimelineSystem';
 import { AIAssistant } from '@/components/AI/AIAssistant';
 import { WorldWarClock } from '@/components/WorldWarClock';
@@ -51,7 +52,7 @@ export const WarfareSimulator: React.FC = () => {
               </div>
             </div>
             <div className="flex-1">
-              <DesktopEmulator osType={osType} />
+              <ProductionDesktopEmulator osType={osType} />
             </div>
           </div>
         );
@@ -78,10 +79,7 @@ export const WarfareSimulator: React.FC = () => {
         onToggleMinimize={() => setShowAI(!showAI)} 
       />
       
-      {/* Global Elements */}
-      <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-40">
-        <WorldWarClock />
-      </div>
+      {/* World War Clock removed - now integrated into top navigation */}
     </>
   );
 };

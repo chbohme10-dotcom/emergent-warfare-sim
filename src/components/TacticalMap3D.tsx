@@ -5,6 +5,7 @@ import * as THREE from 'three';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { GLOBAL_LOCATIONS, LocationCategory } from '@/data/globalLocations';
 import { 
   Globe, 
   Satellite, 
@@ -23,7 +24,14 @@ import {
   Radio,
   Database,
   Plane,
-  Ship
+  Ship,
+  Skull,
+  Home,
+  Server,
+  Crosshair,
+  Anchor,
+  EyeOff as EyeOffIcon,
+  ShieldCheck
 } from 'lucide-react';
 
 interface MapNode {
@@ -94,24 +102,34 @@ const Globe3D = ({ nodes, routes, visibleLayers }: {
 
   return (
     <group ref={groupRef}>
-      {/* Earth Sphere */}
-      <Sphere ref={meshRef} args={[2, 64, 64]}>
+      {/* Earth Sphere - Dark cyber theme */}
+      <Sphere ref={meshRef} args={[2, 128, 128]}>
         <meshStandardMaterial 
-          color="#0a0a0a"
-          roughness={0.8}
-          metalness={0.2}
+          color="#000510"
+          roughness={0.9}
+          metalness={0.1}
           transparent
-          opacity={0.9}
+          opacity={0.95}
         />
       </Sphere>
       
-      {/* Wireframe Overlay */}
-      <Sphere args={[2.01, 32, 32]}>
+      {/* Wireframe Overlay - Matrix green */}
+      <Sphere args={[2.005, 64, 64]}>
         <meshBasicMaterial 
-          color="#003322"
+          color="#001122"
           wireframe={true}
           transparent
-          opacity={0.3}
+          opacity={0.4}
+        />
+      </Sphere>
+      
+      {/* Country borders - Cyber green glow */}
+      <Sphere args={[2.01, 32, 32]}>
+        <meshBasicMaterial 
+          color="#00ff88"
+          wireframe={true}
+          transparent
+          opacity={0.15}
         />
       </Sphere>
 
@@ -196,12 +214,22 @@ const Globe3D = ({ nodes, routes, visibleLayers }: {
         );
       })}
 
-      {/* Atmospheric glow */}
-      <Sphere args={[2.3, 32, 32]}>
+      {/* Atmospheric glow - Cyber theme */}
+      <Sphere args={[2.15, 32, 32]}>
         <meshBasicMaterial 
           color="#00ff88"
           transparent
-          opacity={0.1}
+          opacity={0.08}
+          side={THREE.BackSide}
+        />
+      </Sphere>
+      
+      {/* Outer space glow */}
+      <Sphere args={[2.25, 32, 32]}>
+        <meshBasicMaterial 
+          color="#0066ff"
+          transparent
+          opacity={0.05}
           side={THREE.BackSide}
         />
       </Sphere>
@@ -251,16 +279,31 @@ export const TacticalMap3D: React.FC = () => {
     }
   ];
 
-  const layerControls = [
-    { id: 'agent', label: 'Agents', icon: Users, color: '#00ff88' },
-    { id: 'facility', label: 'Facilities', icon: Shield, color: '#ff4444' },
-    { id: 'target', label: 'Targets', icon: Target, color: '#ff8800' },
-    { id: 'threat', label: 'Threats', icon: AlertTriangle, color: '#ff0066' },
-    { id: 'satellite', label: 'Satellites', icon: Satellite, color: '#0088ff' },
-    { id: 'shipping', label: 'Shipping', icon: Ship, color: '#0088ff' },
-    { id: 'air', label: 'Air Routes', icon: Plane, color: '#ff8800' },
-    { id: 'communication', label: 'Communications', icon: Radio, color: '#00ff88' }
-  ];
+  // Dynamic layer controls based on global locations data
+  const layerControls = GLOBAL_LOCATIONS.map(category => ({
+    id: category.id,
+    label: category.name,
+    icon: getIconForCategory(category.icon),
+    color: category.color,
+    classification: category.classification
+  }));
+
+  function getIconForCategory(iconName: string) {
+    const iconMap: { [key: string]: any } = {
+      'shield': Shield,
+      'skull': Skull,
+      'home': Home,
+      'server': Server,
+      'crosshair': Crosshair,
+      'radio': Radio,
+      'anchor': Anchor,
+      'plane': Plane,
+      'satellite': Satellite,
+      'eye-off': EyeOffIcon,
+      'shield-check': ShieldCheck
+    };
+    return iconMap[iconName] || MapPin;
+  }
 
   const toggleLayer = (layerId: string) => {
     setVisibleLayers(prev => 
@@ -275,7 +318,7 @@ export const TacticalMap3D: React.FC = () => {
       {/* 3D Globe */}
       <Canvas 
         camera={{ position: [0, 0, 8], fov: 50 }}
-        style={{ background: 'radial-gradient(circle, #001122 0%, #000000 100%)' }}
+        style={{ background: 'radial-gradient(circle, #000510 0%, #000000 100%)' }}
       >
         <ambientLight intensity={0.2} />
         <pointLight position={[10, 10, 10]} intensity={0.5} color="#00ff88" />
@@ -326,17 +369,23 @@ export const TacticalMap3D: React.FC = () => {
             </Badge>
           </div>
           
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 gap-1 max-h-64 overflow-y-auto">
             {layerControls.map((layer) => (
               <Button
                 key={layer.id}
                 size="sm"
                 variant={visibleLayers.includes(layer.id) ? 'default' : 'outline'}
                 onClick={() => toggleLayer(layer.id)}
-                className="text-xs h-8 flex items-center gap-2"
+                className="text-xs h-7 flex items-center gap-2 justify-start"
               >
                 <layer.icon className="w-3 h-3" style={{ color: layer.color }} />
-                {layer.label}
+                <span className="truncate">{layer.label}</span>
+                {layer.classification === 'TOP SECRET' && (
+                  <Badge variant="critical" className="text-xs ml-auto">TS</Badge>
+                )}
+                {layer.classification === 'SECRET' && (
+                  <Badge variant="warning" className="text-xs ml-auto">S</Badge>
+                )}
               </Button>
             ))}
           </div>
