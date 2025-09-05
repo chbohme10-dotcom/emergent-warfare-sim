@@ -4,6 +4,8 @@ import { TerminalInterface } from '@/components/TerminalInterface';
 import { TacticalMap3D } from '@/components/TacticalMap3D';
 import { DesktopEmulator } from '@/components/DesktopEmulator';
 import { ProductionDesktopEmulator } from '@/components/Enhanced/ProductionDesktopEmulator';
+import { MobileHackingDevice } from '@/components/Mobile/MobileHackingDevice';
+import { AndroidInterface } from '@/components/Mobile/AndroidInterface';
 import { TimelineSystem } from '@/components/Timeline/TimelineSystem';
 import { AIAssistant } from '@/components/AI/AIAssistant';
 import { WorldWarClock } from '@/components/WorldWarClock';
@@ -59,7 +61,20 @@ export const WarfareSimulator: React.FC = () => {
       case 'blackbag':
         return <div className="p-8 text-center text-muted-foreground">Equipment management coming soon...</div>;
       case 'mobile':
-        return <div className="p-8 text-center text-muted-foreground">Mobile hacking suite coming soon...</div>;
+        return (
+          <div className="h-full flex items-center justify-center bg-terminal-bg">
+            <div className="flex gap-8 items-center">
+              <div className="text-center">
+                <h3 className="text-glow-primary font-display font-bold mb-4">TACTICAL MOBILE DEVICE</h3>
+                <AndroidInterface onClose={() => {}} />
+              </div>
+              <div className="text-center">
+                <h3 className="text-glow-primary font-display font-bold mb-4">MOBILE HACKING SUITE</h3>
+                <MobileHackingDevice />
+              </div>
+            </div>
+          </div>
+        );
       case 'tools':
         return <div className="p-8 text-center text-muted-foreground">Advanced tools interface coming soon...</div>;
       default:

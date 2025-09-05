@@ -5,6 +5,8 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { BrowserApp } from '@/components/Desktop/BrowserApp';
+import { EmailApp } from '@/components/Desktop/EmailApp';
 import { 
   Monitor, 
   Terminal, 
@@ -24,13 +26,19 @@ import {
   Maximize2,
   X,
   MonitorSpeaker,
-  Computer
+  Computer,
+  Globe,
+  Mail,
+  Database,
+  Code,
+  HardDrive,
+  Activity
 } from 'lucide-react';
 
 interface Window {
   id: string;
   title: string;
-  type: 'terminal' | 'wireshark' | 'metasploit' | 'burp' | 'nmap' | 'file-manager' | 'browser';
+  type: 'terminal' | 'wireshark' | 'metasploit' | 'burp' | 'nmap' | 'file-manager' | 'browser' | 'email' | 'code-editor' | 'database';
   isMinimized: boolean;
   position: { x: number; y: number };
   size: { width: number; height: number };
@@ -196,6 +204,71 @@ export const ProductionDesktopEmulator: React.FC<ProductionDesktopEmulatorProps>
 
   const renderWindowContent = (window: Window) => {
     switch (window.type) {
+      case 'browser':
+        return <BrowserApp windowId={window.id} onClose={() => closeWindow(window.id)} />;
+      
+      case 'email':
+        return <EmailApp onClose={() => closeWindow(window.id)} />;
+      
+      case 'code-editor':
+        return (
+          <div className="h-full bg-gray-900 text-green-400 font-mono">
+            <div className="bg-gray-800 p-2 border-b border-gray-700 flex items-center gap-2">
+              <span className="text-sm">exploit.py</span>
+              <Badge variant="outline" className="text-xs">Modified</Badge>
+            </div>
+            <div className="p-4 text-sm">
+              <div className="text-gray-500"># Advanced Penetration Testing Script</div>
+              <div className="text-blue-400">import</div> <span className="text-white">socket, subprocess, sys</span>
+              <div className="text-blue-400">from</div> <span className="text-white">scapy.all import *</span>
+              <div className="mt-2 text-gray-500"># Network reconnaissance function</div>
+              <div className="text-blue-400">def</div> <span className="text-yellow-400">network_scan</span><span className="text-white">(target_ip):</span>
+              <div className="ml-4 text-white">ports = [21, 22, 23, 25, 53, 80, 110, 443, 993, 995]</div>
+              <div className="ml-4 text-blue-400">for</div> <span className="text-white">port in ports:</span>
+              <div className="ml-8 text-white">sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)</div>
+              <div className="ml-8 text-white">result = sock.connect_ex((target_ip, port))</div>
+              <div className="ml-8 text-blue-400">if</div> <span className="text-white">result == 0:</span>
+               <div className="ml-12 text-green-400">print(f&quot;Port {'{port}'} is open&quot;)</div>
+               <div className="ml-8 text-white">sock.close()</div>
+               <div className="mt-4 animate-pulse">█</div>
+             </div>
+           </div>
+        );
+        
+      case 'database':
+        return (
+          <div className="h-full bg-gray-900 text-white">
+            <div className="bg-gray-800 p-2 border-b border-gray-700 flex items-center justify-between">
+              <span className="text-sm font-mono">SQL Client - target_db</span>
+              <Badge className="bg-red-500/20 text-red-400">UNAUTHORIZED ACCESS</Badge>
+            </div>
+            <div className="flex h-full">
+              <div className="w-1/4 bg-gray-800 border-r border-gray-700 p-2">
+                <h4 className="text-xs font-bold mb-2">DATABASES</h4>
+                <div className="space-y-1 text-xs">
+                  <div className="text-green-400">• customer_data</div>
+                  <div className="text-green-400">• financial_records</div>
+                  <div className="text-green-400">• user_credentials</div>
+                  <div className="text-red-400">• classified_intel</div>
+                </div>
+              </div>
+              <div className="flex-1 p-4">
+                <div className="bg-black p-2 rounded mb-4 font-mono text-sm">
+                  <div className="text-green-400">mysql{'>'} SELECT * FROM user_credentials LIMIT 10;</div>
+                  <div className="mt-2 text-white">
+                    <div>| id | username | password_hash | email |</div>
+                    <div>|----|----------|---------------|-------|</div>
+                    <div>| 1  | admin    | 5e884898da... | admin@target.com |</div>
+                    <div>| 2  | jdoe     | ef797c8118... | john@target.com  |</div>
+                    <div>| 3  | ssmith   | 7c6a180b36... | sarah@target.com |</div>
+                  </div>
+                  <div className="text-green-400 mt-2">3 rows in set (0.01 sec)</div>
+                  <div className="text-green-400">mysql{'>'} <span className="animate-pulse">█</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
       case 'terminal':
         return (
           <div className="h-full bg-black text-green-400 font-mono text-sm p-4">
@@ -281,27 +354,27 @@ export const ProductionDesktopEmulator: React.FC<ProductionDesktopEmulatorProps>
             
             <ScrollArea className="h-[70%] mb-4">
               <div className="space-y-1">
-                <div>msf6 &gt; use exploit/multi/handler</div>
+                <div>msf6 {'>'} use exploit/multi/handler</div>
                 <div>[*] Using configured payload generic/shell_reverse_tcp</div>
-                <div>msf6 exploit(multi/handler) &gt; set LHOST 192.168.1.100</div>
+                <div>msf6 exploit(multi/handler) {'>'} set LHOST 192.168.1.100</div>
                 <div>LHOST =&gt; 192.168.1.100</div>
-                <div>msf6 exploit(multi/handler) &gt; set LPORT 4444</div>
+                <div>msf6 exploit(multi/handler) {'>'} set LPORT 4444</div>
                 <div>LPORT =&gt; 4444</div>
-                <div>msf6 exploit(multi/handler) &gt; show payloads</div>
+                <div>msf6 exploit(multi/handler) {'>'} show payloads</div>
                 <div className="ml-4">
                   <div>android/meterpreter/reverse_tcp</div>
                   <div>linux/x64/meterpreter/reverse_tcp</div>
                   <div>windows/x64/meterpreter/reverse_tcp</div>
                   <div>python/meterpreter/reverse_tcp</div>
                 </div>
-                <div>msf6 exploit(multi/handler) &gt; exploit</div>
+                <div>msf6 exploit(multi/handler) {'>'} exploit</div>
                 <div>[*] Started reverse TCP handler on 192.168.1.100:4444</div>
                 <div>[*] Waiting for connection...</div>
               </div>
             </ScrollArea>
             
             <div className="flex items-center">
-              <span className="text-red-400 mr-2">msf6 exploit(multi/handler) &gt;</span>
+              <span className="text-red-400 mr-2">msf6 exploit(multi/handler) {'>'}</span>
               <Input
                 className="bg-transparent border-none text-red-400 focus:ring-0 p-0"
                 placeholder="Enter Metasploit command..."
