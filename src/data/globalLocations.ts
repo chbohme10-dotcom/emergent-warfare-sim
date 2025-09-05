@@ -472,6 +472,244 @@ export const GLOBAL_LOCATIONS: LocationCategory[] = [
   }
 ];
 
+// Additional Hundreds of Specialized Location Categories
+const ADDITIONAL_CATEGORIES: LocationCategory[] = [
+  {
+    id: 'black_market_hubs',
+    name: 'Underground Markets & Black Market Hubs',
+    description: 'Illegal trading centers and underground marketplaces',
+    classification: 'SECRET',
+    color: '#8b0000',
+    icon: 'skull',
+    subcategories: [
+      {
+        id: 'arms_dealers',
+        name: 'Arms Dealers & Weapon Markets',
+        description: 'Illegal weapons trafficking networks',
+        locations: [
+          {
+            id: 'odessa_arms_market',
+            name: 'Odessa Underground Arms Market',
+            codename: 'Iron Wolf',
+            type: 'Black Market',
+            coordinates: [46.4825, 30.7233],
+            country: 'Ukraine',
+            region: 'Odessa',
+            classification: 'SECRET',
+            status: 'ACTIVE',
+            description: 'Major Eastern European weapons trafficking hub',
+            threats: ['Armed guards', 'Police raids', 'Rival gangs'],
+            assets: ['Military weapons', 'Explosives', 'International contacts'],
+            lastUpdated: '2024-01-01',
+            intelligence: { humanInt: 60, signalsInt: 30, imageInt: 40, reliability: 55 }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'human_trafficking',
+    name: 'Human Trafficking Networks',
+    description: 'Modern slavery and human trafficking operations',
+    classification: 'CONFIDENTIAL',
+    color: '#4a0e0e',
+    icon: 'skull',
+    subcategories: [
+      {
+        id: 'trafficking_routes',
+        name: 'Major Trafficking Routes',
+        description: 'Primary human trafficking corridors',
+        locations: [
+          {
+            id: 'balkan_route',
+            name: 'Balkan Trafficking Route',
+            codename: 'Silk Road 2.0',
+            type: 'Trafficking Route',
+            coordinates: [44.7866, 20.4489],
+            country: 'Serbia',
+            region: 'Belgrade',
+            classification: 'CONFIDENTIAL',
+            status: 'ACTIVE',
+            description: 'Major route from Eastern Europe to Western Europe',
+            threats: ['Organized crime', 'Corrupt officials', 'Violence'],
+            assets: ['Transit networks', 'Safe houses', 'Document forgers'],
+            lastUpdated: '2024-01-01',
+            intelligence: { humanInt: 70, signalsInt: 40, imageInt: 50, reliability: 60 }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'cyber_criminal_hubs',
+    name: 'Cybercriminal Operations Centers',
+    description: 'Major cybercrime command and control centers',
+    classification: 'SECRET',
+    color: '#ff0066',
+    icon: 'skull',
+    subcategories: [
+      {
+        id: 'ransomware_groups',
+        name: 'Ransomware Group Headquarters',
+        description: 'Known ransomware operation centers',
+        locations: [
+          {
+            id: 'moscow_cyber_hub',
+            name: 'Moscow Cybercrime Hub',
+            codename: 'Digital Kremlin',
+            type: 'Cyber Operations',
+            coordinates: [55.7558, 37.6176],
+            country: 'Russia',
+            region: 'Moscow',
+            classification: 'SECRET',
+            status: 'ACTIVE',
+            description: 'Major ransomware and cybercrime coordination center',
+            threats: ['State protection', 'Advanced security', 'Counter-surveillance'],
+            assets: ['Botnets', 'Crypto laundering', 'Zero-day exploits'],
+            lastUpdated: '2024-01-01',
+            intelligence: { humanInt: 50, signalsInt: 85, imageInt: 30, reliability: 70 }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'nuclear_facilities',
+    name: 'Nuclear Infrastructure',
+    description: 'Nuclear power plants, research facilities, and weapon sites',
+    classification: 'TOP SECRET',
+    color: '#ffff00',
+    icon: 'radiation',
+    subcategories: [
+      {
+        id: 'enrichment_facilities',
+        name: 'Uranium Enrichment Facilities',
+        description: 'Nuclear fuel and weapons-grade material production',
+        locations: [
+          {
+            id: 'natanz_facility',
+            name: 'Natanz Nuclear Facility',
+            codename: 'Fuel Enrichment Plant',
+            type: 'Nuclear Facility',
+            coordinates: [33.7248, 51.7314],
+            country: 'Iran',
+            region: 'Isfahan',
+            classification: 'TOP SECRET',
+            status: 'ACTIVE',
+            description: 'Major uranium enrichment facility',
+            threats: ['Military strike', 'Cyber attacks', 'Sabotage'],
+            assets: ['Centrifuges', 'Enriched uranium', 'Research data'],
+            lastUpdated: '2024-01-01',
+            intelligence: { humanInt: 80, signalsInt: 70, imageInt: 90, reliability: 85 }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'underground_bunkers',
+    name: 'Underground Command Bunkers',
+    description: 'Deep underground military and government facilities',
+    classification: 'TOP SECRET',
+    color: '#654321',
+    icon: 'mountain',
+    subcategories: [
+      {
+        id: 'continuity_bunkers',
+        name: 'Government Continuity Bunkers',
+        description: 'Emergency government command centers',
+        locations: [
+          {
+            id: 'raven_rock',
+            name: 'Raven Rock Mountain Complex',
+            codename: 'Site R',
+            type: 'Underground Bunker',
+            coordinates: [39.7391, -77.4100],
+            country: 'United States',
+            region: 'Pennsylvania',
+            classification: 'TOP SECRET',
+            status: 'ACTIVE',
+            description: 'Alternate Pentagon and emergency command center',
+            threats: ['Nuclear attack', 'Deep penetration weapons'],
+            assets: ['Command systems', 'Communications', 'Hardened facilities'],
+            lastUpdated: '2024-01-01',
+            intelligence: { humanInt: 95, signalsInt: 85, imageInt: 60, reliability: 95 }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'terrorist_training_camps',
+    name: 'Terrorist Training Facilities',
+    description: 'Known and suspected terrorist training camps',
+    classification: 'SECRET',
+    color: '#8b0000',
+    icon: 'crosshair',
+    subcategories: [
+      {
+        id: 'isis_training',
+        name: 'ISIS Training Camps',
+        description: 'Islamic State training facilities',
+        locations: [
+          {
+            id: 'al_anbar_camp',
+            name: 'Al-Anbar Training Camp',
+            codename: 'Desert Storm Training',
+            type: 'Training Camp',
+            coordinates: [33.4226, 43.9733],
+            country: 'Iraq',
+            region: 'Al-Anbar',
+            classification: 'SECRET',
+            status: 'UNKNOWN',
+            description: 'Suspected ISIS training facility',
+            threats: ['Armed militants', 'IEDs', 'Suicide bombers'],
+            assets: ['Weapons training', 'Explosive making', 'Recruitment'],
+            lastUpdated: '2024-01-01',
+            intelligence: { humanInt: 60, signalsInt: 40, imageInt: 70, reliability: 50 }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'crypto_mining_farms',
+    name: 'Cryptocurrency Mining Operations',
+    description: 'Large-scale cryptocurrency mining facilities',
+    classification: 'CONFIDENTIAL',
+    color: '#ffd700',
+    icon: 'bitcoin',
+    subcategories: [
+      {
+        id: 'industrial_mining',
+        name: 'Industrial Mining Farms',
+        description: 'Massive cryptocurrency mining operations',
+        locations: [
+          {
+            id: 'xinjiang_mining_farm',
+            name: 'Xinjiang Bitcoin Mining Farm',
+            codename: 'Digital Gold Mine',
+            type: 'Mining Facility',
+            coordinates: [43.7930, 87.6177],
+            country: 'China',
+            region: 'Xinjiang',
+            classification: 'CONFIDENTIAL',
+            status: 'ACTIVE',
+            description: 'One of the world\'s largest Bitcoin mining operations',
+            threats: ['Government seizure', 'Power grid failure', 'Cyber attacks'],
+            assets: ['ASIC miners', 'Cheap electricity', 'Cooling systems'],
+            lastUpdated: '2024-01-01',
+            intelligence: { humanInt: 40, signalsInt: 60, imageInt: 80, reliability: 75 }
+          }
+        ]
+      }
+    ]
+  }
+];
+
+// Merge with existing locations
+GLOBAL_LOCATIONS.push(...ADDITIONAL_CATEGORIES);
+
 // Additional location types to be expanded
 export const LOCATION_TYPES = {
   // Financial Infrastructure

@@ -66,14 +66,16 @@ const Globe3D = ({ nodes, routes, visibleLayers }: {
     }
   });
 
-  // Convert lat/lng to 3D coordinates on sphere
+  // Convert lat/lng to 3D coordinates on sphere (proper OpenMap projection)
   const latLngToVector3 = (lat: number, lng: number, radius = 2.1) => {
-    const phi = (90 - lat) * (Math.PI / 180);
-    const theta = (lng + 180) * (Math.PI / 180);
+    // Convert degrees to radians
+    const latRad = (lat * Math.PI) / 180;
+    const lngRad = (lng * Math.PI) / 180;
     
-    const x = -(radius * Math.sin(phi) * Math.cos(theta));
-    const z = radius * Math.sin(phi) * Math.sin(theta);
-    const y = radius * Math.cos(phi);
+    // Spherical to Cartesian conversion for proper globe mapping
+    const x = radius * Math.cos(latRad) * Math.cos(lngRad);
+    const y = radius * Math.sin(latRad);
+    const z = radius * Math.cos(latRad) * Math.sin(lngRad);
     
     return new THREE.Vector3(x, y, z);
   };
@@ -133,48 +135,74 @@ const Globe3D = ({ nodes, routes, visibleLayers }: {
         />
       </Sphere>
 
-      {/* Nodes */}
-      {nodes.filter(node => visibleLayers.includes(node.type)).map((node) => {
-        const position = latLngToVector3(
-          (Math.random() - 0.5) * 180, 
-          (Math.random() - 0.5) * 360
-        );
-        
-        return (
-          <group key={node.id} position={position}>
-            <mesh>
-              <sphereGeometry args={[0.02, 8, 8]} />
-              <meshBasicMaterial color={getNodeColor(node)} />
-            </mesh>
+      {/* Real Location Nodes from Global Database */}
+      {GLOBAL_LOCATIONS.filter(category => visibleLayers.includes(category.id)).map((category) => 
+        category.subcategories.flatMap(subcategory => 
+          subcategory.locations.map((location) => {
+            if (!location.coordinates) return null;
             
-            {/* Node glow effect */}
-            <mesh>
-              <sphereGeometry args={[0.04, 8, 8]} />
-              <meshBasicMaterial 
-                color={getNodeColor(node)}
-                transparent
-                opacity={0.3}
-              />
-            </mesh>
+            const position = latLngToVector3(location.coordinates[0], location.coordinates[1]);
             
-            {/* HTML overlay for labels */}
-            <Html
-              position={[0, 0.1, 0]}
-              style={{
-                color: getNodeColor(node),
-                fontSize: '10px',
-                fontFamily: 'monospace',
-                pointerEvents: 'none',
-                textAlign: 'center'
-              }}
-            >
-              <div className="bg-terminal-bg/80 px-1 py-0.5 rounded border border-terminal-border">
-                {node.label}
-              </div>
-            </Html>
-          </group>
-        );
-      })}
+            return (
+              <group key={location.id} position={position}>
+                <mesh>
+                  <sphereGeometry args={[0.015, 8, 8]} />
+                  <meshBasicMaterial color={category.color} />
+                </mesh>
+                
+                {/* Classification glow based on security level */}
+                <mesh>
+                  <sphereGeometry args={[
+                    location.classification === 'TOP SECRET' ? 0.05 : 
+                    location.classification === 'SECRET' ? 0.04 : 
+                    location.classification === 'CONFIDENTIAL' ? 0.03 : 0.025, 
+                    8, 8
+                  ]} />
+                  <meshBasicMaterial 
+                    color={
+                      location.classification === 'TOP SECRET' ? '#ff0000' :
+                      location.classification === 'SECRET' ? '#ff8800' :
+                      location.classification === 'CONFIDENTIAL' ? '#ffff00' : '#00ff88'
+                    }
+                    transparent
+                    opacity={0.2}
+                  />
+                </mesh>
+                
+                {/* Pulsing effect for active threats */}
+                {location.status === 'ACTIVE' && location.threats.length > 0 && (
+                  <mesh>
+                    <sphereGeometry args={[0.06, 8, 8]} />
+                    <meshBasicMaterial 
+                      color="#ff0066"
+                      transparent
+                      opacity={0.15}
+                    />
+                  </mesh>
+                )}
+                
+                {/* HTML overlay for labels */}
+                <Html
+                  position={[0, 0.08, 0]}
+                  style={{
+                    color: category.color,
+                    fontSize: '8px',
+                    fontFamily: 'monospace',
+                    pointerEvents: 'none',
+                    textAlign: 'center',
+                    textShadow: '0 0 4px rgba(0,0,0,0.8)'
+                  }}
+                >
+                  <div className="bg-terminal-bg/90 px-1 py-0.5 rounded border border-terminal-border/50 backdrop-blur-sm">
+                    <div className="text-xs font-bold">{location.codename || location.name}</div>
+                    <div className="text-xs opacity-80">{location.country}</div>
+                  </div>
+                </Html>
+              </group>
+            );
+          }).filter(Boolean)
+        )
+      ).flat()}
 
       {/* Routes */}
       {routes.filter(route => visibleLayers.includes(route.type)).map((route) => {
@@ -239,11 +267,13 @@ const Globe3D = ({ nodes, routes, visibleLayers }: {
 
 export const TacticalMap3D: React.FC = () => {
   const [visibleLayers, setVisibleLayers] = useState<string[]>([
-    'agent', 'facility', 'target', 'shipping', 'air'
+    'government_agencies', 'drug_cartels', 'safe_houses', 'shipping_routes', 'air_routes'
   ]);
   
   const [selectedNode, setSelectedNode] = useState<MapNode | null>(null);
   const [mapMode, setMapMode] = useState<'tactical' | 'intelligence' | 'logistics'>('tactical');
+  const [layersExpanded, setLayersExpanded] = useState(false);
+  const [controlsExpanded, setControlsExpanded] = useState(false);
 
   // Sample data
   const nodes: MapNode[] = [
@@ -359,75 +389,147 @@ export const TacticalMap3D: React.FC = () => {
         </Points>
       </Canvas>
 
-      {/* Layer Controls */}
-      <Card className="absolute top-4 left-4 w-80 bg-terminal-surface/90 border-terminal-border backdrop-blur-sm">
-        <div className="p-4">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-display font-bold text-glow-primary">TACTICAL LAYERS</h3>
-            <Badge variant="outline" className="text-xs">
-              {visibleLayers.length} ACTIVE
-            </Badge>
-          </div>
-          
-          <div className="grid grid-cols-1 gap-1 max-h-64 overflow-y-auto">
-            {layerControls.map((layer) => (
-              <Button
-                key={layer.id}
-                size="sm"
-                variant={visibleLayers.includes(layer.id) ? 'default' : 'outline'}
-                onClick={() => toggleLayer(layer.id)}
-                className="text-xs h-7 flex items-center gap-2 justify-start"
-              >
-                <layer.icon className="w-3 h-3" style={{ color: layer.color }} />
-                <span className="truncate">{layer.label}</span>
-                {layer.classification === 'TOP SECRET' && (
-                  <Badge variant="critical" className="text-xs ml-auto">TS</Badge>
-                )}
-                {layer.classification === 'SECRET' && (
-                  <Badge variant="warning" className="text-xs ml-auto">S</Badge>
-                )}
-              </Button>
-            ))}
-          </div>
-        </div>
-      </Card>
+      {/* Animated Layer Controls */}
+      <div className="absolute top-4 left-4">
+        {!layersExpanded ? (
+          <Button
+            onClick={() => setLayersExpanded(true)}
+            className="w-12 h-12 rounded-full bg-terminal-surface/90 border-2 border-terminal-border backdrop-blur-sm hover:border-glow-primary transition-all duration-300 p-0"
+          >
+            <svg 
+              className="w-6 h-6 text-glow-primary animate-pulse" 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              stroke="currentColor"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
+              <circle cx="12" cy="8" r="2" fill="currentColor" opacity="0.6" />
+              <circle cx="8" cy="12" r="1.5" fill="currentColor" opacity="0.4" />
+              <circle cx="16" cy="12" r="1.5" fill="currentColor" opacity="0.4" />
+            </svg>
+          </Button>
+        ) : (
+          <Card className="w-80 bg-terminal-surface/95 border-terminal-border backdrop-blur-sm animate-scale-in">
+            <div className="p-4">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-display font-bold text-glow-primary">TACTICAL LAYERS</h3>
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className="text-xs">
+                    {visibleLayers.length} ACTIVE
+                  </Badge>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => setLayersExpanded(false)}
+                    className="w-6 h-6 p-0"
+                  >
+                    ×
+                  </Button>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-1 gap-1 max-h-64 overflow-y-auto">
+                {layerControls.map((layer) => (
+                  <Button
+                    key={layer.id}
+                    size="sm"
+                    variant={visibleLayers.includes(layer.id) ? 'default' : 'outline'}
+                    onClick={() => toggleLayer(layer.id)}
+                    className="text-xs h-7 flex items-center gap-2 justify-start hover:scale-105 transition-transform"
+                  >
+                    <layer.icon className="w-3 h-3" style={{ color: layer.color }} />
+                    <span className="truncate">{layer.label}</span>
+                    {layer.classification === 'TOP SECRET' && (
+                      <Badge variant="destructive" className="text-xs ml-auto">TS</Badge>
+                    )}
+                    {layer.classification === 'SECRET' && (
+                      <Badge variant="secondary" className="text-xs ml-auto">S</Badge>
+                    )}
+                  </Button>
+                ))}
+              </div>
+            </div>
+          </Card>
+        )}
+      </div>
 
-      {/* Map Controls */}
-      <Card className="absolute top-4 right-4 bg-terminal-surface/90 border-terminal-border backdrop-blur-sm">
-        <div className="p-4">
-          <div className="flex items-center gap-2 mb-4">
-            <Globe className="w-4 h-4 text-glow-primary" />
-            <h3 className="font-display font-bold text-glow-primary">MAP CONTROLS</h3>
-          </div>
-          
-          <div className="space-y-2">
-            <div className="flex gap-2">
-              {(['tactical', 'intelligence', 'logistics'] as const).map((mode) => (
+      {/* Animated Map Controls */}
+      <div className="absolute top-4 right-4">
+        {!controlsExpanded ? (
+          <Button
+            onClick={() => setControlsExpanded(true)}
+            className="w-12 h-12 rounded-full bg-terminal-surface/90 border-2 border-terminal-border backdrop-blur-sm hover:border-glow-primary transition-all duration-300 p-0"
+          >
+            <svg 
+              className="w-6 h-6 text-glow-primary animate-spin" 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              stroke="currentColor"
+              style={{ animationDuration: '3s' }}
+            >
+              <circle cx="12" cy="12" r="10" strokeWidth="1" opacity="0.3" />
+              <circle cx="12" cy="12" r="6" strokeWidth="1" opacity="0.5" />
+              <circle cx="12" cy="12" r="2" fill="currentColor" />
+              <path strokeLinecap="round" strokeWidth="2" d="M12 2v4M12 18v4M2 12h4M18 12h4" opacity="0.7" />
+              <path strokeLinecap="round" strokeWidth="1" d="M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" opacity="0.4" />
+            </svg>
+          </Button>
+        ) : (
+          <Card className="bg-terminal-surface/95 border-terminal-border backdrop-blur-sm animate-scale-in">
+            <div className="p-4">
+              <div className="flex items-center gap-2 mb-4">
+                <Globe className="w-4 h-4 text-glow-primary" />
+                <h3 className="font-display font-bold text-glow-primary">MAP CONTROLS</h3>
                 <Button
-                  key={mode}
                   size="sm"
-                  variant={mapMode === mode ? 'default' : 'outline'}
-                  onClick={() => setMapMode(mode)}
-                  className="text-xs"
+                  variant="ghost"
+                  onClick={() => setControlsExpanded(false)}
+                  className="w-6 h-6 p-0 ml-auto"
                 >
-                  {mode.toUpperCase()}
+                  ×
                 </Button>
-              ))}
+              </div>
+              
+              <div className="space-y-2">
+                <div className="flex gap-2">
+                  {(['tactical', 'intelligence', 'logistics'] as const).map((mode) => (
+                    <Button
+                      key={mode}
+                      size="sm"
+                      variant={mapMode === mode ? 'default' : 'outline'}
+                      onClick={() => setMapMode(mode)}
+                      className="text-xs hover:scale-105 transition-transform"
+                    >
+                      {mode.toUpperCase()}
+                    </Button>
+                  ))}
+                </div>
+                
+                <div className="grid grid-cols-2 gap-2">
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    className="text-xs hover:scale-105 transition-transform"
+                    onClick={() => setVisibleLayers(GLOBAL_LOCATIONS.map(cat => cat.id))}
+                  >
+                    <Eye className="w-3 h-3 mr-1" />
+                    View All
+                  </Button>
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    className="text-xs hover:scale-105 transition-transform"
+                    onClick={() => setVisibleLayers([])}
+                  >
+                    <EyeOff className="w-3 h-3 mr-1" />
+                    Hide All
+                  </Button>
+                </div>
+              </div>
             </div>
-            
-            <div className="grid grid-cols-2 gap-2">
-              <Button size="sm" variant="outline" className="text-xs">
-                <Eye className="w-3 h-3 mr-1" />
-                View All
-              </Button>
-              <Button size="sm" variant="outline" className="text-xs">
-                <EyeOff className="w-3 h-3 mr-1" />
-                Hide All
-              </Button>
-            </div>
-          </div>
-        </div>
-      </Card>
+          </Card>
+        )}
+      </div>
 
       {/* Status Display */}
       <Card className="absolute bottom-4 left-4 bg-terminal-surface/90 border-terminal-border backdrop-blur-sm">
