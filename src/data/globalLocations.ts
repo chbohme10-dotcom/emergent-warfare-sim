@@ -41,6 +41,159 @@ export interface IntelLocation {
 
 export const GLOBAL_LOCATIONS: LocationCategory[] = [
   {
+    id: 'black_sites',
+    name: 'Black Sites & Classified Operations',
+    description: 'Undisclosed detention facilities, black sites, and covert operations centers',
+    classification: 'TOP SECRET',
+    color: '#000000',
+    icon: 'skull',
+    subcategories: [
+      {
+        id: 'detention_facilities',
+        name: 'Detention Facilities',
+        description: 'Classified detention and interrogation centers',
+        locations: [
+          {
+            id: 'guantanamo_bay',
+            name: 'Guantanamo Bay Detention Camp',
+            codename: 'GTMO',
+            type: 'Detention Facility',
+            coordinates: [19.9031, -75.0967],
+            country: 'Cuba (US Controlled)',
+            region: 'Caribbean',
+            classification: 'TOP SECRET',
+            status: 'ACTIVE',
+            description: 'High-value detainee interrogation facility',
+            operationalDetails: 'Enhanced interrogation techniques, psychological operations',
+            threats: ['International legal challenges', 'Terrorist recruitment'],
+            assets: ['Enhanced interrogation teams', 'Military police', 'Intelligence analysts'],
+            lastUpdated: '2024-01-01',
+            intelligence: { humanInt: 95, signalsInt: 85, imageInt: 90, reliability: 98 }
+          },
+          {
+            id: 'site_green',
+            name: 'Site Green',
+            codename: 'COBALT',
+            type: 'Black Site',
+            coordinates: [34.5553, 69.2075],
+            country: 'Afghanistan',
+            region: 'Kabul Province',
+            classification: 'TOP SECRET',
+            status: 'COMPROMISED',
+            description: 'Former CIA black site detention facility',
+            operationalDetails: 'High-value target interrogation and psychological conditioning',
+            threats: ['Exposure risk', 'Political fallout', 'Legal proceedings'],
+            assets: ['Psychological operations unit', 'Medical staff', 'Security detail'],
+            lastUpdated: '2024-01-01',
+            intelligence: { humanInt: 75, signalsInt: 60, imageInt: 40, reliability: 70 }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'drug_cartels',
+    name: 'Narcotics & Trafficking Networks',
+    description: 'Major drug cartel operations, smuggling routes, and production facilities',
+    classification: 'SECRET',
+    color: '#8B4513',
+    icon: 'alert-triangle',
+    subcategories: [
+      {
+        id: 'production_facilities',
+        name: 'Production Facilities',
+        description: 'Known and suspected drug production laboratories',
+        locations: [
+          {
+            id: 'sinaloa_lab_alpha',
+            name: 'Culiacán Super Lab',
+            codename: 'CRYSTAL PALACE',
+            type: 'Methamphetamine Production',
+            coordinates: [24.7993, -107.3938],
+            country: 'Mexico',
+            region: 'Sinaloa',
+            classification: 'SECRET',
+            status: 'ACTIVE',
+            description: 'Large-scale methamphetamine production facility',
+            operationalDetails: 'Capable of producing 200kg+ per week, heavily fortified',
+            threats: ['Armed guards', 'Chemical hazards', 'Cartel violence'],
+            assets: ['Chemical precursors', 'Distribution network', 'Corruption network'],
+            lastUpdated: '2024-01-01',
+            intelligence: { humanInt: 85, signalsInt: 70, imageInt: 80, reliability: 90 }
+          },
+          {
+            id: 'golden_triangle_lab',
+            name: 'Mekong Super Lab',
+            codename: 'DRAGON SMOKE',
+            type: 'Synthetic Drug Production',
+            coordinates: [20.2518, 100.2683],
+            country: 'Myanmar',
+            region: 'Shan State',
+            classification: 'SECRET',
+            status: 'ACTIVE',
+            description: 'Industrial-scale methamphetamine and fentanyl production',
+            operationalDetails: 'Chinese precursor chemicals, armed ethnic groups protection',
+            threats: ['Ethnic armed organizations', 'Chemical weapons', 'Cross-border violence'],
+            assets: ['Precursor smuggling routes', 'Distribution networks', 'Bribery networks'],
+            lastUpdated: '2024-01-01',
+            intelligence: { humanInt: 80, signalsInt: 65, imageInt: 75, reliability: 85 }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'cyber_warfare',
+    name: 'Cyber Warfare Centers',
+    description: 'State-sponsored hacking groups, cyber warfare units, and digital espionage centers',
+    classification: 'TOP SECRET',
+    color: '#00FF41',
+    icon: 'wifi',
+    subcategories: [
+      {
+        id: 'state_sponsored',
+        name: 'State-Sponsored Groups',
+        description: 'Government-backed cyber warfare and espionage units',
+        locations: [
+          {
+            id: 'apt29_moscow',
+            name: 'SVR Cyber Operations',
+            codename: 'COZY BEAR',
+            type: 'Cyber Warfare Unit',
+            coordinates: [55.7558, 37.6173],
+            country: 'Russia',
+            region: 'Moscow',
+            classification: 'TOP SECRET',
+            status: 'ACTIVE',
+            description: 'Russian Foreign Intelligence Service cyber division',
+            operationalDetails: 'Advanced persistent threat operations, election interference',
+            threats: ['International sanctions', 'Cyber retaliation', 'Attribution'],
+            assets: ['Zero-day exploits', 'Botnet infrastructure', 'Social engineering teams'],
+            lastUpdated: '2024-01-01',
+            intelligence: { humanInt: 95, signalsInt: 98, imageInt: 70, reliability: 95 }
+          },
+          {
+            id: 'unit_61398',
+            name: 'PLA Unit 61398',
+            codename: 'COMMENT CREW',
+            type: 'Military Cyber Unit',
+            coordinates: [31.2304, 121.4737],
+            country: 'China',
+            region: 'Shanghai',
+            classification: 'TOP SECRET',
+            status: 'ACTIVE',
+            description: 'People\'s Liberation Army cyber espionage unit',
+            operationalDetails: 'Industrial espionage, intellectual property theft',
+            threats: ['Economic sanctions', 'Diplomatic consequences', 'Exposure'],
+            assets: ['Advanced malware', 'Spear phishing capabilities', 'Insider networks'],
+            lastUpdated: '2024-01-01',
+            intelligence: { humanInt: 90, signalsInt: 95, imageInt: 65, reliability: 92 }
+          }
+        ]
+      }
+    ]
+  },
+  {
     id: 'government_agencies',
     name: 'Government Agencies',
     description: 'Intelligence agencies, military commands, and government facilities',
@@ -86,6 +239,23 @@ export const GLOBAL_LOCATIONS: LocationCategory[] = [
             assets: ['ECHELON network', 'Cyber defense teams', 'Cryptographic research'],
             lastUpdated: '2024-01-01',
             intelligence: { humanInt: 80, signalsInt: 98, imageInt: 75, reliability: 95 }
+          },
+          {
+            id: 'mossad_tel_aviv',
+            name: 'Mossad Headquarters',
+            codename: 'The Institute',
+            type: 'Intelligence Service',
+            coordinates: [32.0853, 34.7818],
+            country: 'Israel',
+            region: 'Tel Aviv',
+            classification: 'TOP SECRET',
+            status: 'ACTIVE',
+            description: 'Israeli foreign intelligence service',
+            operationalDetails: 'Counterterrorism, nuclear intelligence, assassination operations',
+            threats: ['Regional terrorism', 'State-sponsored attacks', 'Cyber warfare'],
+            assets: ['Kidon unit', 'HUMINT networks', 'Technology operations'],
+            lastUpdated: '2024-01-01',
+            intelligence: { humanInt: 98, signalsInt: 85, imageInt: 90, reliability: 95 }
           }
         ]
       },
@@ -99,475 +269,34 @@ export const GLOBAL_LOCATIONS: LocationCategory[] = [
             name: 'NORAD Cheyenne Mountain',
             codename: 'The Mountain',
             type: 'Command Center',
-            coordinates: [38.7444, -104.8461],
+            coordinates: [38.7434, -104.8465],
             country: 'United States',
             region: 'Colorado',
             classification: 'TOP SECRET',
             status: 'ACTIVE',
             description: 'North American Aerospace Defense Command',
-            operationalDetails: 'Continental air defense and space surveillance',
-            threats: ['Nuclear attack', 'EMP weapons', 'Cyber warfare'],
-            assets: ['Missile defense systems', 'Space tracking', 'Emergency command'],
+            operationalDetails: 'Nuclear attack detection, space surveillance, air defense',
+            threats: ['EMP attacks', 'Nuclear strike', 'Cyber warfare'],
+            assets: ['Early warning systems', 'Satellite tracking', 'Command infrastructure'],
             lastUpdated: '2024-01-01',
-            intelligence: { humanInt: 90, signalsInt: 95, imageInt: 88, reliability: 99 }
-          }
-        ]
-      }
-    ]
-  },
-  {
-    id: 'drug_cartels',
-    name: 'Drug Cartels & Criminal Organizations',
-    description: 'International criminal syndicates and trafficking networks',
-    classification: 'CONFIDENTIAL',
-    color: '#8b0000',
-    icon: 'skull',
-    subcategories: [
-      {
-        id: 'mexican_cartels',
-        name: 'Mexican Cartels',
-        description: 'Major Mexican drug trafficking organizations',
-        locations: [
-          {
-            id: 'sinaloa_compound',
-            name: 'Sinaloa Cartel Compound',
-            codename: 'El Dorado',
-            type: 'Criminal HQ',
-            coordinates: [25.7939, -108.9856],
-            country: 'Mexico',
-            region: 'Sinaloa',
-            classification: 'CONFIDENTIAL',
-            status: 'ACTIVE',
-            description: 'Primary Sinaloa Cartel operational base',
-            operationalDetails: 'Drug production and distribution coordination',
-            threats: ['Armed guards', 'Tunnel networks', 'Corrupt officials'],
-            assets: ['Drug labs', 'Weapon caches', 'Money laundering'],
-            lastUpdated: '2024-01-01',
-            intelligence: { humanInt: 70, signalsInt: 45, imageInt: 60, reliability: 65 }
-          }
-        ]
-      }
-    ]
-  },
-  {
-    id: 'safe_houses',
-    name: 'Safe Houses & Cover Operations',
-    description: 'Covert facilities and operational safe houses',
-    classification: 'SECRET',
-    color: '#4a90e2',
-    icon: 'home',
-    subcategories: [
-      {
-        id: 'cia_safe_houses',
-        name: 'CIA Safe Houses',
-        description: 'Agency safe houses and cover locations',
-        locations: [
-          {
-            id: 'vienna_safe_house',
-            name: 'Vienna Safe House Alpha',
-            codename: 'Mozart Station',
-            type: 'Safe House',
-            coordinates: [48.2082, 16.3738],
-            country: 'Austria',
-            region: 'Vienna',
-            classification: 'SECRET',
-            status: 'ACTIVE',
-            description: 'Primary European operations safe house',
-            operationalDetails: 'Agent debrief and emergency extraction point',
-            threats: ['Foreign surveillance', 'Asset compromise'],
-            assets: ['Secure communications', 'Weapons cache', 'Medical facilities'],
-            lastUpdated: '2024-01-01',
-            intelligence: { humanInt: 85, signalsInt: 70, imageInt: 60, reliability: 90 }
-          }
-        ]
-      }
-    ]
-  },
-  {
-    id: 'data_centers',
-    name: 'Data Centers & Edge Networks',
-    description: 'Critical internet infrastructure and data processing facilities',
-    classification: 'CONFIDENTIAL',
-    color: '#00ff88',
-    icon: 'server',
-    subcategories: [
-      {
-        id: 'cloud_providers',
-        name: 'Major Cloud Providers',
-        description: 'Large-scale cloud computing facilities',
-        locations: [
-          {
-            id: 'aws_us_east_1',
-            name: 'AWS US-East-1',
-            codename: 'Northern Virginia',
-            type: 'Data Center',
-            coordinates: [38.9072, -77.0369],
-            country: 'United States',
-            region: 'Virginia',
-            classification: 'CONFIDENTIAL',
-            status: 'ACTIVE',
-            description: 'Amazon Web Services primary data center region',
-            operationalDetails: 'Critical internet infrastructure hosting',
-            threats: ['Cyber attacks', 'Physical infiltration', 'Power grid failure'],
-            assets: ['Massive server farms', 'Fiber optic networks', 'Backup power'],
-            lastUpdated: '2024-01-01',
-            intelligence: { humanInt: 40, signalsInt: 95, imageInt: 80, reliability: 95 }
-          }
-        ]
-      }
-    ]
-  },
-  {
-    id: 'warfronts',
-    name: 'Active Warfronts & Conflict Zones',
-    description: 'Current military conflicts and unstable regions',
-    classification: 'CONFIDENTIAL',
-    color: '#ff6b35',
-    icon: 'crosshair',
-    subcategories: [
-      {
-        id: 'proxy_conflicts',
-        name: 'Proxy Conflicts',
-        description: 'Regions of proxy warfare and insurgency',
-        locations: [
-          {
-            id: 'syria_conflict',
-            name: 'Syrian Conflict Zone',
-            codename: 'Desert Storm',
-            type: 'Active Conflict',
-            coordinates: [35.2137, 38.9967],
-            country: 'Syria',
-            region: 'Central Syria',
-            classification: 'CONFIDENTIAL',
-            status: 'ACTIVE',
-            description: 'Ongoing multi-faction conflict zone',
-            operationalDetails: 'Complex proxy war with multiple international actors',
-            threats: ['Active combat', 'Chemical weapons', 'Terrorist groups'],
-            assets: ['Strategic airfields', 'Oil facilities', 'Supply routes'],
-            lastUpdated: '2024-01-01',
-            intelligence: { humanInt: 60, signalsInt: 70, imageInt: 85, reliability: 70 }
-          }
-        ]
-      }
-    ]
-  },
-  {
-    id: 'cell_towers',
-    name: 'Telecommunications Infrastructure',
-    description: 'Critical communications infrastructure and monitoring stations',
-    classification: 'UNCLASSIFIED',
-    color: '#ffa500',
-    icon: 'radio',
-    subcategories: [
-      {
-        id: 'cellular_networks',
-        name: 'Cellular Networks',
-        description: 'Mobile phone tower networks and base stations',
-        locations: [
-          {
-            id: 'verizon_tower_ny',
-            name: 'Verizon Cell Tower NY-4471',
-            type: 'Cell Tower',
-            coordinates: [40.7589, -73.9851],
-            country: 'United States',
-            region: 'New York',
-            classification: 'UNCLASSIFIED',
-            status: 'ACTIVE',
-            description: 'High-capacity urban cellular base station',
-            operationalDetails: 'Provides coverage for Manhattan financial district',
-            threats: ['Signal jamming', 'Physical sabotage', 'Data interception'],
-            assets: ['5G capability', 'Emergency backup', 'High bandwidth'],
-            lastUpdated: '2024-01-01',
-            intelligence: { humanInt: 20, signalsInt: 85, imageInt: 40, reliability: 90 }
-          }
-        ]
-      }
-    ]
-  },
-  {
-    id: 'shipping_routes',
-    name: 'Maritime Shipping Routes',
-    description: 'Major ocean shipping lanes and port facilities',
-    classification: 'UNCLASSIFIED',
-    color: '#0088ff',
-    icon: 'anchor',
-    subcategories: [
-      {
-        id: 'container_routes',
-        name: 'Container Shipping Routes',
-        description: 'Major container shipping lanes between continents',
-        locations: [
-          {
-            id: 'suez_canal',
-            name: 'Suez Canal',
-            codename: 'Desert Passage',
-            type: 'Shipping Lane',
-            coordinates: [30.0444, 32.3487],
-            country: 'Egypt',
-            region: 'Suez',
-            classification: 'CONFIDENTIAL',
-            status: 'ACTIVE',
-            description: 'Critical maritime chokepoint connecting Europe and Asia',
-            operationalDetails: '12% of global trade passes through this waterway',
-            threats: ['Piracy', 'Blockade', 'Terrorist attacks'],
-            assets: ['Canal authority control', 'Military protection', 'Pilot services'],
-            lastUpdated: '2024-01-01',
-            intelligence: { humanInt: 75, signalsInt: 60, imageInt: 90, reliability: 95 }
-          }
-        ]
-      }
-    ]
-  },
-  {
-    id: 'air_routes',
-    name: 'Aviation Networks',
-    description: 'Commercial and military aviation routes and airports',
-    classification: 'UNCLASSIFIED',
-    color: '#ff8800',
-    icon: 'plane',
-    subcategories: [
-      {
-        id: 'major_airports',
-        name: 'Major International Airports',
-        description: 'Primary global aviation hubs',
-        locations: [
-          {
-            id: 'heathrow_airport',
-            name: 'London Heathrow Airport',
-            codename: 'Gateway',
-            type: 'International Airport',
-            coordinates: [51.4700, -0.4543],
-            country: 'United Kingdom',
-            region: 'London',
-            classification: 'UNCLASSIFIED',
-            status: 'ACTIVE',
-            description: 'One of the busiest international airports globally',
-            operationalDetails: 'Major hub for European and intercontinental flights',
-            threats: ['Terrorism', 'Cyber attacks', 'Smuggling'],
-            assets: ['Air traffic control', 'Security systems', 'Cargo facilities'],
-            lastUpdated: '2024-01-01',
-            intelligence: { humanInt: 70, signalsInt: 80, imageInt: 85, reliability: 95 }
-          }
-        ]
-      }
-    ]
-  },
-  {
-    id: 'satellite_networks',
-    name: 'Satellite Networks',
-    description: 'Orbital satellite systems and ground control stations',
-    classification: 'SECRET',
-    color: '#9b59b6',
-    icon: 'satellite',
-    subcategories: [
-      {
-        id: 'military_satellites',
-        name: 'Military Satellites',
-        description: 'Defense and intelligence satellite systems',
-        locations: [
-          {
-            id: 'kh11_keyhole',
-            name: 'KH-11 Keyhole Satellite',
-            codename: 'Crystal',
-            type: 'Reconnaissance Satellite',
-            coordinates: [0, 0], // Orbital
-            country: 'United States',
-            region: 'Low Earth Orbit',
-            classification: 'TOP SECRET',
-            status: 'ACTIVE',
-            description: 'Advanced electro-optical reconnaissance satellite',
-            operationalDetails: 'Real-time intelligence gathering from space',
-            threats: ['Anti-satellite weapons', 'Space debris', 'Electronic warfare'],
-            assets: ['High-resolution imaging', 'Real-time downlink', 'Encrypted comms'],
-            lastUpdated: '2024-01-01',
-            intelligence: { humanInt: 30, signalsInt: 98, imageInt: 99, reliability: 95 }
-          }
-        ]
-      }
-    ]
-  },
-  {
-    id: 'secret_locations',
-    name: 'Classified Facilities',
-    description: 'Highly classified and compartmentalized facilities',
-    classification: 'TOP SECRET',
-    color: '#2c3e50',
-    icon: 'eye-off',
-    subcategories: [
-      {
-        id: 'black_sites',
-        name: 'Black Sites',
-        description: 'Unacknowledged special access facilities',
-        locations: [
-          {
-            id: 'area_51',
-            name: 'Area 51',
-            codename: 'Groom Lake',
-            type: 'Research Facility',
-            coordinates: [37.2431, -115.7930],
-            country: 'United States',
-            region: 'Nevada',
-            classification: 'TOP SECRET',
-            status: 'ACTIVE',
-            description: 'Highly classified U.S. Air Force facility',
-            operationalDetails: 'Advanced aerospace testing and development',
-            threats: ['Foreign intelligence', 'Unauthorized surveillance', 'Information leaks'],
-            assets: ['Test aircraft', 'Advanced technology', 'Research personnel'],
-            lastUpdated: '2024-01-01',
-            intelligence: { humanInt: 95, signalsInt: 85, imageInt: 70, reliability: 90 }
+            intelligence: { humanInt: 90, signalsInt: 95, imageInt: 80, reliability: 98 }
           },
           {
-            id: 'pine_gap',
-            name: 'Pine Gap',
-            codename: 'Joint Defense Facility',
-            type: 'Intelligence Station',
-            coordinates: [-23.7988, 133.7381],
-            country: 'Australia',
-            region: 'Northern Territory',
-            classification: 'TOP SECRET',
-            status: 'ACTIVE',
-            description: 'Joint US-Australian intelligence facility',
-            operationalDetails: 'Satellite intelligence and missile detection',
-            threats: ['Foreign surveillance', 'Cyber attacks', 'Espionage'],
-            assets: ['Satellite ground stations', 'Signal intelligence', 'Missile warning'],
-            lastUpdated: '2024-01-01',
-            intelligence: { humanInt: 85, signalsInt: 95, imageInt: 80, reliability: 95 }
-          }
-        ]
-      }
-    ]
-  },
-  {
-    id: 'cyber_infrastructure',
-    name: 'Cyber Infrastructure',
-    description: 'Critical cybersecurity and network infrastructure',
-    classification: 'SECRET',
-    color: '#00ffff',
-    icon: 'shield-check',
-    subcategories: [
-      {
-        id: 'internet_exchanges',
-        name: 'Internet Exchange Points',
-        description: 'Critical internet infrastructure nodes',
-        locations: [
-          {
-            id: 'de_cix_frankfurt',
-            name: 'DE-CIX Frankfurt',
-            type: 'Internet Exchange',
-            coordinates: [50.1109, 8.6821],
-            country: 'Germany',
-            region: 'Frankfurt',
-            classification: 'CONFIDENTIAL',
-            status: 'ACTIVE',
-            description: 'Major European internet exchange point',
-            operationalDetails: 'Critical hub for European internet traffic',
-            threats: ['DDoS attacks', 'State surveillance', 'Physical sabotage'],
-            assets: ['High-speed routers', 'Fiber networks', 'Redundant systems'],
-            lastUpdated: '2024-01-01',
-            intelligence: { humanInt: 50, signalsInt: 90, imageInt: 70, reliability: 90 }
-          }
-        ]
-      }
-    ]
-  }
-];
-
-// Additional Hundreds of Specialized Location Categories
-const ADDITIONAL_CATEGORIES: LocationCategory[] = [
-  {
-    id: 'black_market_hubs',
-    name: 'Underground Markets & Black Market Hubs',
-    description: 'Illegal trading centers and underground marketplaces',
-    classification: 'SECRET',
-    color: '#8b0000',
-    icon: 'skull',
-    subcategories: [
-      {
-        id: 'arms_dealers',
-        name: 'Arms Dealers & Weapon Markets',
-        description: 'Illegal weapons trafficking networks',
-        locations: [
-          {
-            id: 'odessa_arms_market',
-            name: 'Odessa Underground Arms Market',
-            codename: 'Iron Wolf',
-            type: 'Black Market',
-            coordinates: [46.4825, 30.7233],
-            country: 'Ukraine',
-            region: 'Odessa',
+            id: 'pentagon',
+            name: 'The Pentagon',
+            codename: 'BUILDING',
+            type: 'Military HQ',
+            coordinates: [38.8719, -77.0563],
+            country: 'United States',
+            region: 'Virginia',
             classification: 'SECRET',
             status: 'ACTIVE',
-            description: 'Major Eastern European weapons trafficking hub',
-            threats: ['Armed guards', 'Police raids', 'Rival gangs'],
-            assets: ['Military weapons', 'Explosives', 'International contacts'],
+            description: 'United States Department of Defense headquarters',
+            operationalDetails: 'Global military command and control',
+            threats: ['Terrorist attacks', 'Cyber warfare', 'Insider threats'],
+            assets: ['Global communications', 'Command systems', 'Intelligence fusion'],
             lastUpdated: '2024-01-01',
-            intelligence: { humanInt: 60, signalsInt: 30, imageInt: 40, reliability: 55 }
-          }
-        ]
-      }
-    ]
-  },
-  {
-    id: 'human_trafficking',
-    name: 'Human Trafficking Networks',
-    description: 'Modern slavery and human trafficking operations',
-    classification: 'CONFIDENTIAL',
-    color: '#4a0e0e',
-    icon: 'skull',
-    subcategories: [
-      {
-        id: 'trafficking_routes',
-        name: 'Major Trafficking Routes',
-        description: 'Primary human trafficking corridors',
-        locations: [
-          {
-            id: 'balkan_route',
-            name: 'Balkan Trafficking Route',
-            codename: 'Silk Road 2.0',
-            type: 'Trafficking Route',
-            coordinates: [44.7866, 20.4489],
-            country: 'Serbia',
-            region: 'Belgrade',
-            classification: 'CONFIDENTIAL',
-            status: 'ACTIVE',
-            description: 'Major route from Eastern Europe to Western Europe',
-            threats: ['Organized crime', 'Corrupt officials', 'Violence'],
-            assets: ['Transit networks', 'Safe houses', 'Document forgers'],
-            lastUpdated: '2024-01-01',
-            intelligence: { humanInt: 70, signalsInt: 40, imageInt: 50, reliability: 60 }
-          }
-        ]
-      }
-    ]
-  },
-  {
-    id: 'cyber_criminal_hubs',
-    name: 'Cybercriminal Operations Centers',
-    description: 'Major cybercrime command and control centers',
-    classification: 'SECRET',
-    color: '#ff0066',
-    icon: 'skull',
-    subcategories: [
-      {
-        id: 'ransomware_groups',
-        name: 'Ransomware Group Headquarters',
-        description: 'Known ransomware operation centers',
-        locations: [
-          {
-            id: 'moscow_cyber_hub',
-            name: 'Moscow Cybercrime Hub',
-            codename: 'Digital Kremlin',
-            type: 'Cyber Operations',
-            coordinates: [55.7558, 37.6176],
-            country: 'Russia',
-            region: 'Moscow',
-            classification: 'SECRET',
-            status: 'ACTIVE',
-            description: 'Major ransomware and cybercrime coordination center',
-            threats: ['State protection', 'Advanced security', 'Counter-surveillance'],
-            assets: ['Botnets', 'Crypto laundering', 'Zero-day exploits'],
-            lastUpdated: '2024-01-01',
-            intelligence: { humanInt: 50, signalsInt: 85, imageInt: 30, reliability: 70 }
+            intelligence: { humanInt: 95, signalsInt: 90, imageInt: 85, reliability: 95 }
           }
         ]
       }
@@ -575,131 +304,84 @@ const ADDITIONAL_CATEGORIES: LocationCategory[] = [
   },
   {
     id: 'nuclear_facilities',
-    name: 'Nuclear Infrastructure',
-    description: 'Nuclear power plants, research facilities, and weapon sites',
+    name: 'Nuclear Facilities & WMD Sites',
+    description: 'Nuclear facilities, weapons storage, and WMD development sites',
     classification: 'TOP SECRET',
-    color: '#ffff00',
-    icon: 'radiation',
+    color: '#FFD700',
+    icon: 'zap',
     subcategories: [
       {
         id: 'enrichment_facilities',
-        name: 'Uranium Enrichment Facilities',
-        description: 'Nuclear fuel and weapons-grade material production',
+        name: 'Uranium Enrichment',
+        description: 'Uranium enrichment and nuclear fuel cycle facilities',
         locations: [
           {
-            id: 'natanz_facility',
-            name: 'Natanz Nuclear Facility',
-            codename: 'Fuel Enrichment Plant',
-            type: 'Nuclear Facility',
-            coordinates: [33.7248, 51.7314],
+            id: 'natanz_iran',
+            name: 'Natanz Fuel Enrichment Plant',
+            codename: 'DESERT BLOOM',
+            type: 'Enrichment Facility',
+            coordinates: [33.7248, 51.7281],
             country: 'Iran',
-            region: 'Isfahan',
+            region: 'Isfahan Province',
             classification: 'TOP SECRET',
             status: 'ACTIVE',
-            description: 'Major uranium enrichment facility',
-            threats: ['Military strike', 'Cyber attacks', 'Sabotage'],
-            assets: ['Centrifuges', 'Enriched uranium', 'Research data'],
+            description: 'Iran\'s primary uranium enrichment facility',
+            operationalDetails: 'Gas centrifuge cascades, underground bunkers',
+            threats: ['Military strikes', 'Cyber attacks', 'Sabotage operations'],
+            assets: ['Centrifuge technology', 'Enriched uranium', 'Defense systems'],
             lastUpdated: '2024-01-01',
-            intelligence: { humanInt: 80, signalsInt: 70, imageInt: 90, reliability: 85 }
+            intelligence: { humanInt: 90, signalsInt: 95, imageInt: 85, reliability: 95 }
+          },
+          {
+            id: 'yongbyon_dprk',
+            name: 'Yongbyon Nuclear Complex',
+            codename: 'HERMIT KINGDOM',
+            type: 'Nuclear Complex',
+            coordinates: [39.7972, 125.7547],
+            country: 'North Korea',
+            region: 'North Pyongan Province',
+            classification: 'TOP SECRET',
+            status: 'ACTIVE',
+            description: 'North Korea\'s main nuclear facility',
+            operationalDetails: 'Plutonium production, reactor operations, reprocessing',
+            threats: ['Military action', 'International sanctions', 'Technical failures'],
+            assets: ['Nuclear reactors', 'Plutonium stockpile', 'Technical expertise'],
+            lastUpdated: '2024-01-01',
+            intelligence: { humanInt: 85, signalsInt: 90, imageInt: 80, reliability: 90 }
           }
         ]
       }
     ]
   },
   {
-    id: 'underground_bunkers',
-    name: 'Underground Command Bunkers',
-    description: 'Deep underground military and government facilities',
+    id: 'safe_houses',
+    name: 'Safe Houses & Dead Drops',
+    description: 'Covert meeting locations, safe houses, and intelligence dead drop sites',
     classification: 'TOP SECRET',
-    color: '#654321',
-    icon: 'mountain',
+    color: '#228B22',
+    icon: 'home',
     subcategories: [
       {
-        id: 'continuity_bunkers',
-        name: 'Government Continuity Bunkers',
-        description: 'Emergency government command centers',
+        id: 'embassy_safe_houses',
+        name: 'Embassy Safe Houses',
+        description: 'Diplomatic cover safe houses and meeting points',
         locations: [
           {
-            id: 'raven_rock',
-            name: 'Raven Rock Mountain Complex',
-            codename: 'Site R',
-            type: 'Underground Bunker',
-            coordinates: [39.7391, -77.4100],
-            country: 'United States',
-            region: 'Pennsylvania',
+            id: 'moscow_safe_house',
+            name: 'Moscow Embassy Safe House',
+            codename: 'VODKA ROOM',
+            type: 'Safe House',
+            coordinates: [55.7558, 37.6176],
+            country: 'Russia',
+            region: 'Moscow',
             classification: 'TOP SECRET',
             status: 'ACTIVE',
-            description: 'Alternate Pentagon and emergency command center',
-            threats: ['Nuclear attack', 'Deep penetration weapons'],
-            assets: ['Command systems', 'Communications', 'Hardened facilities'],
+            description: 'US Embassy covert operations safe house',
+            operationalDetails: 'Asset debriefing, emergency exfiltration point',
+            threats: ['FSB surveillance', 'Diplomatic exposure', 'Asset compromise'],
+            assets: ['Secure communications', 'Emergency supplies', 'Exfiltration routes'],
             lastUpdated: '2024-01-01',
-            intelligence: { humanInt: 95, signalsInt: 85, imageInt: 60, reliability: 95 }
-          }
-        ]
-      }
-    ]
-  },
-  {
-    id: 'terrorist_training_camps',
-    name: 'Terrorist Training Facilities',
-    description: 'Known and suspected terrorist training camps',
-    classification: 'SECRET',
-    color: '#8b0000',
-    icon: 'crosshair',
-    subcategories: [
-      {
-        id: 'isis_training',
-        name: 'ISIS Training Camps',
-        description: 'Islamic State training facilities',
-        locations: [
-          {
-            id: 'al_anbar_camp',
-            name: 'Al-Anbar Training Camp',
-            codename: 'Desert Storm Training',
-            type: 'Training Camp',
-            coordinates: [33.4226, 43.9733],
-            country: 'Iraq',
-            region: 'Al-Anbar',
-            classification: 'SECRET',
-            status: 'UNKNOWN',
-            description: 'Suspected ISIS training facility',
-            threats: ['Armed militants', 'IEDs', 'Suicide bombers'],
-            assets: ['Weapons training', 'Explosive making', 'Recruitment'],
-            lastUpdated: '2024-01-01',
-            intelligence: { humanInt: 60, signalsInt: 40, imageInt: 70, reliability: 50 }
-          }
-        ]
-      }
-    ]
-  },
-  {
-    id: 'crypto_mining_farms',
-    name: 'Cryptocurrency Mining Operations',
-    description: 'Large-scale cryptocurrency mining facilities',
-    classification: 'CONFIDENTIAL',
-    color: '#ffd700',
-    icon: 'bitcoin',
-    subcategories: [
-      {
-        id: 'industrial_mining',
-        name: 'Industrial Mining Farms',
-        description: 'Massive cryptocurrency mining operations',
-        locations: [
-          {
-            id: 'xinjiang_mining_farm',
-            name: 'Xinjiang Bitcoin Mining Farm',
-            codename: 'Digital Gold Mine',
-            type: 'Mining Facility',
-            coordinates: [43.7930, 87.6177],
-            country: 'China',
-            region: 'Xinjiang',
-            classification: 'CONFIDENTIAL',
-            status: 'ACTIVE',
-            description: 'One of the world\'s largest Bitcoin mining operations',
-            threats: ['Government seizure', 'Power grid failure', 'Cyber attacks'],
-            assets: ['ASIC miners', 'Cheap electricity', 'Cooling systems'],
-            lastUpdated: '2024-01-01',
-            intelligence: { humanInt: 40, signalsInt: 60, imageInt: 80, reliability: 75 }
+            intelligence: { humanInt: 95, signalsInt: 70, imageInt: 60, reliability: 90 }
           }
         ]
       }
@@ -707,48 +389,24 @@ const ADDITIONAL_CATEGORIES: LocationCategory[] = [
   }
 ];
 
-// Merge with existing locations
-GLOBAL_LOCATIONS.push(...ADDITIONAL_CATEGORIES);
-
-// Additional location types to be expanded
+// Location type constants for easy reference
 export const LOCATION_TYPES = {
-  // Financial Infrastructure
-  CENTRAL_BANKS: 'Central Banks & Financial Institutions',
-  STOCK_EXCHANGES: 'Stock Exchanges & Trading Centers',
-  CRYPTO_EXCHANGES: 'Cryptocurrency Exchanges',
-  
-  // Energy Infrastructure
-  NUCLEAR_FACILITIES: 'Nuclear Power Plants',
-  OIL_REFINERIES: 'Oil Refineries & Pipelines',
-  POWER_GRIDS: 'Electrical Grid Control Centers',
-  
-  // Transportation Hubs
-  MAJOR_PORTS: 'Strategic Seaports',
-  RAIL_NETWORKS: 'Railway Control Centers',
-  HIGHWAY_SYSTEMS: 'Highway Infrastructure',
-  
-  // Research Facilities
-  BIOWEAPON_LABS: 'Biological Research Facilities',
-  PARTICLE_ACCELERATORS: 'Physics Research Centers',
-  SPACE_FACILITIES: 'Space Launch & Control Centers',
-  
-  // Underground Networks
-  TUNNEL_SYSTEMS: 'Underground Tunnel Networks',
-  BUNKER_COMPLEXES: 'Hardened Underground Facilities',
-  METRO_SYSTEMS: 'Urban Transportation Networks',
-  
-  // Diplomatic Facilities
-  EMBASSIES: 'Embassy & Consulate Facilities',
-  UN_FACILITIES: 'United Nations Facilities',
-  DIPLOMATIC_RESIDENCES: 'Diplomatic Housing Compounds',
-  
-  // Media & Communications
-  NEWS_ORGANIZATIONS: 'Major News Organizations',
-  BROADCAST_CENTERS: 'Television & Radio Centers',
-  SOCIAL_MEDIA_HQ: 'Social Media Company Headquarters',
-  
-  // Technology Companies
-  TECH_CAMPUSES: 'Major Technology Company Campuses',
-  SEMICONDUCTOR_FABS: 'Semiconductor Manufacturing',
-  AI_RESEARCH_LABS: 'Artificial Intelligence Research Centers'
+  INTELLIGENCE_HQ: 'Intelligence Headquarters',
+  MILITARY_BASE: 'Military Base',
+  GOVERNMENT_FACILITY: 'Government Facility',
+  RESEARCH_LAB: 'Research Laboratory',
+  DATA_CENTER: 'Data Center',
+  COMMUNICATION_HUB: 'Communication Hub',
+  SATELLITE_FACILITY: 'Satellite Facility',
+  NUCLEAR_FACILITY: 'Nuclear Facility',
+  DETENTION_CENTER: 'Detention Center',
+  TRAINING_FACILITY: 'Training Facility',
+  SAFE_HOUSE: 'Safe House',
+  DEAD_DROP: 'Dead Drop',
+  BORDER_CROSSING: 'Border Crossing',
+  SMUGGLING_ROUTE: 'Smuggling Route',
+  PRODUCTION_LAB: 'Production Laboratory',
+  CYBER_OPERATIONS: 'Cyber Operations Center',
+  BLACK_SITE: 'Black Site',
+  UNDERGROUND_FACILITY: 'Underground Facility'
 };
