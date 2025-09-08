@@ -3,6 +3,9 @@ import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { SatelliteNode, ALL_SATELLITE_NODES } from '@/data/satelliteComms';
 import { GLOBAL_LOCATIONS } from '@/data/globalLocations';
+import { ALL_AIR_ROUTES, ALL_AIRPORTS } from '@/data/airTravelRoutes';
+import { ALL_CRIMINAL_NODES } from '@/data/criminalNetworks';
+import { ALL_ESPIONAGE_LOCATIONS } from '@/data/espionageLocations';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -22,8 +25,8 @@ export const MapboxGlobe: React.FC<MapboxGlobeProps> = ({
 }) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
-  const [mapboxToken, setMapboxToken] = useState('');
-  const [isTokenSet, setIsTokenSet] = useState(false);
+  const [mapboxToken, setMapboxToken] = useState('pk.eyJ1IjoiY3JpbmtlZGFydCIsImEiOiJjbWZhbXJkeTgxZDloMmxvZjB1ZjQxczBzIn0.XanOxg-xA88pNFAvy5K5kA');
+  const [isTokenSet, setIsTokenSet] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
 
   // Initialize map when token is provided
@@ -171,10 +174,14 @@ export const MapboxGlobe: React.FC<MapboxGlobeProps> = ({
     if (!map.current) return;
 
     // Remove existing sources
-    ['satellite-nodes', 'global-locations'].forEach(sourceId => {
+    ['satellite-nodes', 'global-locations', 'air-routes', 'airports', 'criminal-nodes', 'espionage-locations'].forEach(sourceId => {
       if (map.current?.getSource(sourceId)) {
         // Remove layers first
-        ['satellite-points', 'satellite-labels', 'location-points', 'location-labels'].forEach(layerId => {
+        [
+          'satellite-points', 'satellite-labels', 'location-points', 'location-labels',
+          'air-routes', 'airport-points', 'airport-labels', 'criminal-points', 'criminal-labels',
+          'espionage-points', 'espionage-labels'
+        ].forEach(layerId => {
           if (map.current?.getLayer(layerId)) {
             map.current.removeLayer(layerId);
           }
@@ -316,8 +323,217 @@ export const MapboxGlobe: React.FC<MapboxGlobeProps> = ({
       });
     }
 
+    // Add Air Routes
+    if (visibleLayers.includes('air_routes')) {
+      const routeFeatures = ALL_AIR_ROUTES.map(route => ({
+        type: 'Feature' as const,
+        geometry: {
+          type: 'LineString' as const,
+          coordinates: [
+            [route.origin.coordinates[1], route.origin.coordinates[0]],
+            ...(route.waypoints?.map(wp => [wp.coordinates[1], wp.coordinates[0]]) || []),
+            [route.destination.coordinates[1], route.destination.coordinates[0]]
+          ]
+        },
+        properties: {
+          ...route,
+          color: getRouteColor(route.type),
+          width: getRouteWidth(route.classification)
+        }
+      }));
+
+      if (routeFeatures.length > 0) {
+        map.current.addSource('air-routes', {
+          type: 'geojson',
+          data: { type: 'FeatureCollection', features: routeFeatures }
+        });
+
+        map.current.addLayer({
+          id: 'air-routes',
+          type: 'line',
+          source: 'air-routes',
+          paint: {
+            'line-color': ['get', 'color'],
+            'line-width': ['get', 'width'],
+            'line-opacity': 0.8,
+            'line-dasharray': [
+              'case',
+              ['==', ['get', 'type'], 'covert'], [2, 2],
+              ['==', ['get', 'type'], 'military'], [4, 2],
+              [1]
+            ]
+          }
+        });
+      }
+    }
+
+    // Add Airports
+    if (visibleLayers.includes('airports')) {
+      const airportFeatures = ALL_AIRPORTS.map(airport => ({
+        type: 'Feature' as const,
+        geometry: {
+          type: 'Point' as const,
+          coordinates: [airport.coordinates[1], airport.coordinates[0]]
+        },
+        properties: {
+          ...airport,
+          color: getAirportColor(airport.type),
+          size: getAirportSize(airport.classification)
+        }
+      }));
+
+      if (airportFeatures.length > 0) {
+        map.current.addSource('airports', {
+          type: 'geojson',
+          data: { type: 'FeatureCollection', features: airportFeatures }
+        });
+
+        map.current.addLayer({
+          id: 'airport-points',
+          type: 'circle',
+          source: 'airports',
+          paint: {
+            'circle-radius': ['get', 'size'],
+            'circle-color': ['get', 'color'],
+            'circle-opacity': 0.9,
+            'circle-stroke-width': 2,
+            'circle-stroke-color': '#ffffff'
+          }
+        });
+
+        map.current.addLayer({
+          id: 'airport-labels',
+          type: 'symbol',
+          source: 'airports',
+          layout: {
+            'text-field': ['get', 'name'],
+            'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
+            'text-size': 9,
+            'text-offset': [0, 1.5],
+            'text-anchor': 'top'
+          },
+          paint: {
+            'text-color': '#ffffff',
+            'text-halo-color': '#000000',
+            'text-halo-width': 1
+          }
+        });
+      }
+    }
+
+    // Add Criminal Networks
+    if (visibleLayers.includes('criminal_networks')) {
+      const criminalFeatures = ALL_CRIMINAL_NODES.map(node => ({
+        type: 'Feature' as const,
+        geometry: {
+          type: 'Point' as const,
+          coordinates: [node.coordinates[1], node.coordinates[0]]
+        },
+        properties: {
+          ...node,
+          color: getCriminalColor(node.type),
+          size: getCriminalSize(node.threat_level)
+        }
+      }));
+
+      if (criminalFeatures.length > 0) {
+        map.current.addSource('criminal-nodes', {
+          type: 'geojson',
+          data: { type: 'FeatureCollection', features: criminalFeatures }
+        });
+
+        map.current.addLayer({
+          id: 'criminal-points',
+          type: 'circle',
+          source: 'criminal-nodes',
+          paint: {
+            'circle-radius': ['get', 'size'],
+            'circle-color': ['get', 'color'],
+            'circle-opacity': 0.8,
+            'circle-stroke-width': 1,
+            'circle-stroke-color': '#000000'
+          }
+        });
+
+        map.current.addLayer({
+          id: 'criminal-labels',
+          type: 'symbol',
+          source: 'criminal-nodes',
+          layout: {
+            'text-field': ['get', 'name'],
+            'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
+            'text-size': 8,
+            'text-offset': [0, 1.5],
+            'text-anchor': 'top'
+          },
+          paint: {
+            'text-color': '#ff4444',
+            'text-halo-color': '#000000',
+            'text-halo-width': 1
+          }
+        });
+      }
+    }
+
+    // Add Espionage Locations
+    if (visibleLayers.includes('espionage')) {
+      const espionageFeatures = ALL_ESPIONAGE_LOCATIONS.map(location => ({
+        type: 'Feature' as const,
+        geometry: {
+          type: 'Point' as const,
+          coordinates: [location.coordinates[1], location.coordinates[0]]
+        },
+        properties: {
+          ...location,
+          color: getEspionageColor(location.type),
+          size: getEspionageSize(location.classification)
+        }
+      }));
+
+      if (espionageFeatures.length > 0) {
+        map.current.addSource('espionage-locations', {
+          type: 'geojson',
+          data: { type: 'FeatureCollection', features: espionageFeatures }
+        });
+
+        map.current.addLayer({
+          id: 'espionage-points',
+          type: 'circle',
+          source: 'espionage-locations',
+          paint: {
+            'circle-radius': ['get', 'size'],
+            'circle-color': ['get', 'color'],
+            'circle-opacity': 0.7,
+            'circle-stroke-width': 1,
+            'circle-stroke-color': '#ffffff'
+          }
+        });
+
+        map.current.addLayer({
+          id: 'espionage-labels',
+          type: 'symbol',
+          source: 'espionage-locations',
+          layout: {
+            'text-field': ['get', 'codename'],
+            'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
+            'text-size': 8,
+            'text-offset': [0, 1.5],
+            'text-anchor': 'top'
+          },
+          paint: {
+            'text-color': '#00ff88',
+            'text-halo-color': '#000000',
+            'text-halo-width': 1
+          }
+        });
+      }
+    }
+
     // Add click handlers
-    ['satellite-points', 'location-points'].forEach(layerId => {
+    [
+      'satellite-points', 'location-points', 'airport-points', 
+      'criminal-points', 'espionage-points'
+    ].forEach(layerId => {
       if (map.current?.getLayer(layerId)) {
         map.current.on('click', layerId, (e) => {
           if (e.features && e.features[0]) {
@@ -380,6 +596,89 @@ export const MapboxGlobe: React.FC<MapboxGlobeProps> = ({
       case 'top secret': return baseSize * 1.4;
       case 'secret': return baseSize * 1.2;
       case 'confidential': return baseSize * 1.1;
+      default: return baseSize;
+    }
+  };
+
+  const getRouteColor = (type: string) => {
+    switch (type) {
+      case 'commercial': return '#00ff88';
+      case 'military': return '#ff4444';
+      case 'covert': return '#ff0066';
+      case 'diplomatic': return '#ffaa00';
+      case 'cargo': return '#8888ff';
+      default: return '#ffffff';
+    }
+  };
+
+  const getRouteWidth = (classification: string) => {
+    switch (classification) {
+      case 'TOP SECRET': return 4;
+      case 'SECRET': return 3;
+      case 'CONFIDENTIAL': return 2;
+      default: return 1;
+    }
+  };
+
+  const getAirportColor = (type: string) => {
+    switch (type) {
+      case 'black_site': return '#000000';
+      case 'military': return '#ff4444';
+      case 'civilian': return '#00ff88';
+      case 'joint_use': return '#ffaa00';
+      case 'private': return '#8888ff';
+      default: return '#ffffff';
+    }
+  };
+
+  const getAirportSize = (classification: string) => {
+    const baseSize = mapMode === '3d' ? 8 : 6;
+    switch (classification) {
+      case 'TOP SECRET': return baseSize * 1.5;
+      case 'SECRET': return baseSize * 1.3;
+      case 'CONFIDENTIAL': return baseSize * 1.1;
+      default: return baseSize;
+    }
+  };
+
+  const getCriminalColor = (type: string) => {
+    switch (type) {
+      case 'cartel_hq': return '#8B0000';
+      case 'trafficking_route': return '#FF4500';
+      case 'money_laundering': return '#FFD700';
+      case 'weapons_cache': return '#A0522D';
+      case 'corruption_node': return '#800080';
+      default: return '#8B4513';
+    }
+  };
+
+  const getCriminalSize = (threatLevel: string) => {
+    const baseSize = mapMode === '3d' ? 7 : 5;
+    switch (threatLevel) {
+      case 'CRITICAL': return baseSize * 1.6;
+      case 'HIGH': return baseSize * 1.3;
+      case 'MEDIUM': return baseSize * 1.1;
+      default: return baseSize;
+    }
+  };
+
+  const getEspionageColor = (type: string) => {
+    switch (type) {
+      case 'spy_nest': return '#4B0082';
+      case 'safe_house': return '#228B22';
+      case 'dead_drop': return '#000080';
+      case 'surveillance_post': return '#FF1493';
+      case 'embassy_annex': return '#DAA520';
+      default: return '#008B8B';
+    }
+  };
+
+  const getEspionageSize = (classification: string) => {
+    const baseSize = mapMode === '3d' ? 6 : 4;
+    switch (classification) {
+      case 'TOP SECRET': return baseSize * 1.4;
+      case 'SECRET': return baseSize * 1.2;
+      case 'CONFIDENTIAL': return baseSize * 1.1;
       default: return baseSize;
     }
   };
@@ -497,6 +796,33 @@ export const MapboxGlobe: React.FC<MapboxGlobeProps> = ({
               <div className="text-terminal-muted">Compromised</div>
               <div className="text-orange-500 font-mono">
                 {ALL_SATELLITE_NODES.filter(n => n.status === 'compromised').length}
+              </div>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-2 gap-2 text-xs mt-3">
+            <div>
+              <div className="text-terminal-muted">Air Routes</div>
+              <div className="text-glow-primary font-mono">
+                {ALL_AIR_ROUTES.length}
+              </div>
+            </div>
+            <div>
+              <div className="text-terminal-muted">Airports</div>
+              <div className="text-glow-primary font-mono">
+                {ALL_AIRPORTS.length}
+              </div>
+            </div>
+            <div>
+              <div className="text-terminal-muted">Criminal Ops</div>
+              <div className="text-red-500 font-mono">
+                {ALL_CRIMINAL_NODES.length}
+              </div>
+            </div>
+            <div>
+              <div className="text-terminal-muted">Espionage</div>
+              <div className="text-purple-500 font-mono">
+                {ALL_ESPIONAGE_LOCATIONS.length}
               </div>
             </div>
           </div>
