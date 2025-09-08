@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { GLOBAL_LOCATIONS, LocationCategory } from '@/data/globalLocations';
+import { ALL_SATELLITE_NODES, SatelliteNode } from '@/data/satelliteComms';
+import { MapboxGlobe } from '@/components/Maps/MapboxGlobe';
 import { 
   Globe, 
   Satellite, 
@@ -38,11 +40,11 @@ import {
 
 interface MapNode {
   id: string;
-  type: 'agent' | 'facility' | 'target' | 'threat' | 'satellite' | 'base';
+  type: 'agent' | 'facility' | 'target' | 'threat' | 'satellite' | 'base' | 'ground_station' | 'relay' | 'deep_space' | 'military' | 'commercial' | 'spy';
   position: [number, number, number];
   label: string;
   classification: 'unclassified' | 'confidential' | 'secret' | 'top_secret';
-  status: 'active' | 'inactive' | 'compromised' | 'unknown';
+  status: 'active' | 'inactive' | 'compromised' | 'unknown' | 'classified';
   data?: any;
 }
 
@@ -160,6 +162,30 @@ const Globe3D = ({ nodes, routes, visibleLayers }: {
     return generatedNodes;
   };
 
+  // Generate satellite communication nodes
+  const generateSatelliteNodes = () => {
+    const satelliteNodes: MapNode[] = [];
+    
+    if (visibleLayers.includes('satellites')) {
+      ALL_SATELLITE_NODES.forEach(satellite => {
+        const [lat, lng] = satellite.coordinates;
+        const position = latLngToVector3(lat, lng, satellite.altitude ? 2 + (satellite.altitude / 20000) : 2.05);
+        
+        satelliteNodes.push({
+          id: satellite.id,
+          type: satellite.type as any,
+          position: [position.x, position.y, position.z],
+          label: satellite.name,
+          classification: satellite.classification,
+          status: satellite.status === 'classified' ? 'unknown' : satellite.status as any,
+          data: satellite
+        });
+      });
+    }
+    
+    return satelliteNodes;
+  };
+
   const getNodeTypeFromCategory = (categoryId: string) => {
     switch (categoryId) {
       case 'government_agencies': return 'facility';
@@ -202,7 +228,7 @@ const Globe3D = ({ nodes, routes, visibleLayers }: {
     }
   };
 
-  const allNodes = [...nodes, ...generateNodesFromLocations()];
+  const allNodes = [...nodes, ...generateNodesFromLocations(), ...generateSatelliteNodes()];
 
   return (
     <group ref={groupRef}>
@@ -350,8 +376,9 @@ const Starfield = () => {
 };
 
 export const TacticalMap3D: React.FC = () => {
-  const [visibleLayers, setVisibleLayers] = useState<string[]>(['government_agencies', 'grid']);
-  const [mapMode, setMapMode] = useState<'tactical' | 'satellite' | 'terrain'>('tactical');
+  const [visibleLayers, setVisibleLayers] = useState<string[]>(['government_agencies', 'satellites', 'grid']);
+  const [mapMode, setMapMode] = useState<'2d' | '3d'>('3d');
+  const [viewType, setViewType] = useState<'globe' | 'mapbox'>('globe');
   const [isControlsMinimized, setIsControlsMinimized] = useState(false);
   const [isLayersMinimized, setIsLayersMinimized] = useState(false);
 
@@ -385,14 +412,24 @@ export const TacticalMap3D: React.FC = () => {
 
   const nodes: MapNode[] = [];
 
-  const layerControls = GLOBAL_LOCATIONS.map(category => ({
-    id: category.id,
-    name: category.name,
-    icon: category.icon,
-    color: category.color,
-    classification: category.classification,
-    count: category.subcategories.reduce((total, sub) => total + sub.locations.length, 0)
-  }));
+  const layerControls = [
+    ...GLOBAL_LOCATIONS.map(category => ({
+      id: category.id,
+      name: category.name,
+      icon: category.icon,
+      color: category.color,
+      classification: category.classification,
+      count: category.subcategories.reduce((total, sub) => total + sub.locations.length, 0)
+    })),
+    {
+      id: 'satellites',
+      name: 'Satellite Communications',
+      icon: 'satellite',
+      color: '#00ff88',
+      classification: 'TOP SECRET',
+      count: ALL_SATELLITE_NODES.length
+    }
+  ];
 
   const toggleLayer = (layerId: string) => {
     setVisibleLayers(prev => 
@@ -420,38 +457,70 @@ export const TacticalMap3D: React.FC = () => {
 
   return (
     <div className="relative w-full h-full bg-terminal-bg">
-      {/* 3D Canvas */}
-      <Canvas
-        camera={{ 
-          position: [0, 0, 8], 
-          fov: 45,
-          near: 0.1,
-          far: 1000 
-        }}
-        style={{ background: 'radial-gradient(ellipse at center, #001122 0%, #000011 100%)' }}
-      >
-        <ambientLight intensity={0.3} />
-        <pointLight position={[10, 10, 10]} intensity={0.8} />
-        <pointLight position={[-10, -10, -10]} intensity={0.3} color="#0088ff" />
-        
-        <Globe3D 
-          nodes={nodes} 
-          routes={routes} 
+      {/* View Toggle */}
+      <Card className="absolute top-4 right-80 z-20 p-2 bg-terminal-bg/90 border-terminal-border backdrop-blur-md">
+        <div className="flex gap-1">
+          <Button
+            variant={viewType === 'globe' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setViewType('globe')}
+            className="text-xs"
+          >
+            <Globe className="w-3 h-3 mr-1" />
+            3D Globe
+          </Button>
+          <Button
+            variant={viewType === 'mapbox' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setViewType('mapbox')}
+            className="text-xs"
+          >
+            <Map className="w-3 h-3 mr-1" />
+            Real Map
+          </Button>
+        </div>
+      </Card>
+
+      {/* Conditional View Rendering */}
+      {viewType === 'mapbox' ? (
+        <MapboxGlobe 
           visibleLayers={visibleLayers}
+          mapMode={mapMode}
+          onModeChange={setMapMode}
         />
-        
-        <OrbitControls 
-          enablePan={true}
-          enableZoom={true}
-          enableRotate={true}
-          minDistance={3}
-          maxDistance={50}
-          autoRotate={false}
-          autoRotateSpeed={0.5}
-        />
-        
-        <Starfield />
-      </Canvas>
+      ) : (
+        <Canvas
+          camera={{ 
+            position: [0, 0, 8], 
+            fov: 45,
+            near: 0.1,
+            far: 1000 
+          }}
+          style={{ background: 'radial-gradient(ellipse at center, #001122 0%, #000011 100%)' }}
+        >
+          <ambientLight intensity={0.3} />
+          <pointLight position={[10, 10, 10]} intensity={0.8} />
+          <pointLight position={[-10, -10, -10]} intensity={0.3} color="#0088ff" />
+          
+          <Globe3D 
+            nodes={nodes} 
+            routes={routes} 
+            visibleLayers={visibleLayers}
+          />
+          
+          <OrbitControls 
+            enablePan={true}
+            enableZoom={true}
+            enableRotate={true}
+            minDistance={3}
+            maxDistance={50}
+            autoRotate={false}
+            autoRotateSpeed={0.5}
+          />
+          
+          <Starfield />
+        </Canvas>
+      )}
 
       {/* Layer Controls - Minimizable */}
       <Card className={`absolute top-4 left-4 transition-all duration-300 ${
@@ -567,16 +636,20 @@ export const TacticalMap3D: React.FC = () => {
             <div className="space-y-3">
               <div>
                 <label className="text-xs text-terminal-muted mb-2 block">VIEW MODE</label>
-                <div className="grid grid-cols-3 gap-1">
-                  {['tactical', 'satellite', 'terrain'].map(mode => (
+                <div className="grid grid-cols-2 gap-1">
+                  {[
+                    { key: '2d', label: '2D', icon: Map },
+                    { key: '3d', label: '3D', icon: Globe }
+                  ].map(mode => (
                     <Button
-                      key={mode}
-                      variant={mapMode === mode ? "default" : "outline"}
+                      key={mode.key}
+                      variant={mapMode === mode.key ? "default" : "outline"}
                       size="sm"
-                      onClick={() => setMapMode(mode as any)}
-                      className="text-xs capitalize"
+                      onClick={() => setMapMode(mode.key as any)}
+                      className="text-xs"
                     >
-                      {mode}
+                      <mode.icon className="w-3 h-3 mr-1" />
+                      {mode.label}
                     </Button>
                   ))}
                 </div>
@@ -609,7 +682,7 @@ export const TacticalMap3D: React.FC = () => {
             </div>
             <div>
               <div className="text-terminal-muted">VIEW MODE</div>
-              <div className="text-glow-primary font-mono uppercase">{mapMode}</div>
+              <div className="text-glow-primary font-mono uppercase">{viewType} {mapMode}</div>
             </div>
             <div>
               <div className="text-terminal-muted">CLASSIFICATION</div>
