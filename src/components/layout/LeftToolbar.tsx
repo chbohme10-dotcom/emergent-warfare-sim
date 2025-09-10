@@ -18,6 +18,7 @@ import { AgentDrawer } from '../drawers/AgentDrawer';
 import { IntelDrawer } from '../drawers/IntelDrawer';
 import { BlackbagDrawer } from '../drawers/BlackbagDrawer';
 import { MobileDrawer } from '../drawers/MobileDrawer';
+import { SatelliteDrawer } from '../drawers/SatelliteDrawer';
 
 interface LeftToolbarProps {
   onDrawerOpen: (drawer: string) => void;
@@ -53,6 +54,8 @@ export const LeftToolbar: React.FC<LeftToolbarProps> = ({
         return <BlackbagDrawer onClose={onDrawerClose} />;
       case 'mobile':
         return <MobileDrawer onClose={onDrawerClose} />;
+      case 'satellite':
+        return <SatelliteDrawer onClose={onDrawerClose} />;
       default:
         return (
           <div className="p-4">
