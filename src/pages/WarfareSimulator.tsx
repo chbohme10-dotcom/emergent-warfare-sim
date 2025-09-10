@@ -1,5 +1,17 @@
 import React, { useState } from 'react';
 import { WarfareLayout } from '@/components/layout/WarfareLayout';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { 
+  Globe, 
+  Terminal, 
+  Users, 
+  Brain, 
+  Monitor, 
+  Briefcase, 
+  Smartphone, 
+  Wrench
+} from 'lucide-react';
 import { TerminalInterface } from '@/components/TerminalInterface';
 import { TacticalMap3D } from '@/components/TacticalMap3D';
 import { DesktopEmulator } from '@/components/DesktopEmulator';
@@ -82,19 +94,72 @@ export const WarfareSimulator: React.FC = () => {
     }
   };
 
+  const tabs = [
+    { id: 'map', label: 'TACTICAL MAP', icon: Globe },
+    { id: 'terminal', label: 'TERMINAL', icon: Terminal },
+    { id: 'agents', label: 'AGENTS', icon: Users },
+    { id: 'intel', label: 'INTEL', icon: Brain },
+    { id: 'pc', label: 'PC', icon: Monitor },
+    { id: 'blackbag', label: 'BLACKBAG', icon: Briefcase },
+    { id: 'mobile', label: 'MOBILE', icon: Smartphone },
+    { id: 'tools', label: 'TOOLS', icon: Wrench }
+  ];
+
   return (
-    <>
+    <div className="min-h-screen bg-background flex flex-col relative">
+      {/* Top Navigation Bar */}
+      <div className="bg-terminal-surface border-b border-terminal-border px-6 py-2">
+        <div className="flex items-center gap-2 overflow-x-auto">
+          {tabs.map(({ id, label, icon: Icon }) => (
+            <Button
+              key={id}
+              variant={activeTab === id ? "terminal" : "ghost"}
+              size="sm"
+              onClick={() => setActiveTab(id)}
+              className={`flex items-center gap-2 whitespace-nowrap font-mono text-xs ${
+                activeTab === id 
+                  ? 'bg-terminal-border text-glow-primary border border-glow-primary/30' 
+                  : 'hover:bg-terminal-border/50'
+              }`}
+            >
+              <Icon className="w-4 h-4" />
+              {label}
+            </Button>
+          ))}
+        </div>
+      </div>
+
+      {/* Main Layout */}
       <WarfareLayout activeTab={activeTab} onTabChange={setActiveTab}>
         {renderTabContent()}
+        {showAI && (
+          <AIAssistant isMinimized={!showAI} onToggleMinimize={() => setShowAI(!showAI)} />
+        )}
       </WarfareLayout>
       
-      {/* AI Assistant */}
-      <AIAssistant 
-        isMinimized={!showAI} 
-        onToggleMinimize={() => setShowAI(!showAI)} 
-      />
-      
-      {/* World War Clock removed - now integrated into top navigation */}
-    </>
+      {/* Status Bar */}
+      <div className="border-t border-terminal-border bg-terminal-surface px-4 py-2">
+        <div className="flex items-center justify-between text-sm font-mono">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-status-success animate-pulse" />
+              <span>FSMC ONLINE</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-status-success animate-pulse" />
+              <span>MOSL SYNCED</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-status-warning animate-pulse" />
+              <span>GCT ANALYZING</span>
+            </div>
+          </div>
+          <div className="flex items-center gap-4">
+            <span className="text-muted-foreground">Agent AX-2387-Delta</span>
+            <Badge variant="terminal" className="text-xs">Level 7 Clearance</Badge>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
